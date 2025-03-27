@@ -9,18 +9,6 @@ exports.getAll = async (req, res) => {
     }
 };
 
-exports.getById = async (req, res) => {
-    try {
-        const organization = await Organization.getById(req.params.id);
-        if (!organization) {
-            return res.status(404).json({ error: 'Organization not found' });
-        }
-        res.json(organization);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
 exports.create = async (req, res) => {
     try {
         const newOrganization = await Organization.create(req.body);

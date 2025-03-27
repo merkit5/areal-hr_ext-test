@@ -6,11 +6,6 @@ class Organization {
         return rows;
     }
 
-    static async getById(id) {
-        const { rows } = await pool.query('SELECT * FROM organization WHERE id = $1 AND deleted_at IS NULL', [id]);
-        return rows[0];
-    }
-
     static async create({ name, comment }) {
         const { rows } = await pool.query(
             'INSERT INTO organization (name, comment) VALUES ($1, $2) RETURNING *',
