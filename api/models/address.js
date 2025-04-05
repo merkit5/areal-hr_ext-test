@@ -2,7 +2,7 @@ const pool = require('../config/db');
 
 class Address {
     static async getAll() {
-        const { rows } = await pool.query('SELECT * FROM address');
+        const { rows } = await pool.query('SELECT * FROM address WHERE deleted_at IS NULL');
         return rows;
     }
 

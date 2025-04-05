@@ -1,4 +1,4 @@
-const Department = require('../models/file');
+const File = require('../models/file');
 
 exports.getAll = async (req, res) => {
     try {
