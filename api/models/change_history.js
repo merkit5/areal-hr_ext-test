@@ -1,30 +1,27 @@
 const pool = require('../config/db');
 
 class ChangeHistory {
-    static async getAll() {
-        const { rows } = await pool.query('SELECT * FROM change_history');
+    static async logAction(client, { action, object_type, object_id, old_data, new_data, user_id }) {
+        const { rows } = await client.query(
+            'INSERT INTO change_history (date, action, object_type, object_id, old_data, new_data, user_id) VALUES (NOW(), $1, $2, $3, $4, $5, $6) RETURNING *',
+            [action, object_type, object_id, old_data, new_data, user_id]
+        );
+        return rows[0];
+    }
+
+    static async getByObject(client, object_type, object_id) {
+        const { rows } = await client.query(
+            'SELECT * FROM change_history WHERE object_type = $1 AND object_id = $2 ORDER BY date DESC',
+            [object_type, object_id]
+        );
         return rows;
     }
 
-    static async create({ date = new Date(), object_type, object_id, changes, user_id }) {
-        const { rows } = await pool.query(
-            `INSERT INTO change_history (date, object_type, object_id, changes, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [date, object_type, object_id, changes, user_id]
+    static async getAll(client) {
+        const { rows } = await client.query(
+            'SELECT * FROM change_history ORDER BY date DESC'
         );
-        return rows[0];
-    }
-
-    static async update(id, { changes }) {
-        const { rows } = await pool.query(
-            `UPDATE change_history SET changes = $1, date = current_timestamp WHERE id = $2 RETURNING *`,
-            [changes, id]
-        );
-        return rows[0];
-    }
-
-    static async delete(id) {
-        await pool.query('DELETE FROM change_history WHERE id = $1', [id]);
-        return { message: 'Change history deleted' };
+        return rows;
     }
 }
 
