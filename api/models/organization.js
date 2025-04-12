@@ -7,11 +7,10 @@ class Organization {
         return rows;
     }
 
+
     static async create(client, { name, comment }) {
         const { rows } = await client.query(
-            `INSERT INTO organization (name, comment) 
-         VALUES ($1, $2) 
-         RETURNING id, name, comment, created_at`,
+            `INSERT INTO organization (name, comment) VALUES ($1, $2) RETURNING *`,
             [name, comment]
         );
 
@@ -36,39 +35,54 @@ class Organization {
     //     return newData;
     // }
 
-    static async update(client, id, { name, comment }, userId) {
-        const oldData = await this.getById(client, id);
+    static async update(client, id, { name, comment }) {
         const { rows } = await client.query(
             'UPDATE organization SET name = $1, comment = $2, updated_at = current_timestamp WHERE id = $3 RETURNING *',
             [name, comment, id]
         );
-        const newData = rows[0];
 
-        await ChangeHistory.logAction(client, {
-            object_type: 'organization',
-            object_id: id,
-            old_data: oldData,
-            new_data: newData,
-            user_id: userId
-        });
-
-        return newData;
+        return rows[0];
     }
 
-    static async delete(client, id, userId) {
-        const oldData = await this.getById(client, id);
-        await client.query('UPDATE organization SET deleted_at = current_timestamp WHERE id = $1', [id]);
+    // static async update(client, id, { name, comment }, userId) {
+    //     const oldData = await this.getById(client, id);
+    //     const { rows } = await client.query(
+    //         'UPDATE organization SET name = $1, comment = $2, updated_at = current_timestamp WHERE id = $3 RETURNING *',
+    //         [name, comment, id]
+    //     );
+    //     const newData = rows[0];
+    //
+    //     await ChangeHistory.logAction(client, {
+    //         object_type: 'organization',
+    //         object_id: id,
+    //         old_data: oldData,
+    //         new_data: newData,
+    //         user_id: userId
+    //     });
+    //
+    //     return newData;
+    // }
 
-        await ChangeHistory.logAction(client, {
-            object_type: 'organization',
-            object_id: id,
-            old_data: oldData,
-            new_data: null,
-            user_id: userId
-        });
+    static async delete(client, id) {
+        await client.query('UPDATE organization SET deleted_at = current_timestamp WHERE id = $1', [id]);
 
         return { message: 'Organization deleted' };
     }
+
+    // static async delete(client, id, userId) {
+    //     const oldData = await this.getById(client, id);
+    //     await client.query('UPDATE organization SET deleted_at = current_timestamp WHERE id = $1', [id]);
+    //
+    //     await ChangeHistory.logAction(client, {
+    //         object_type: 'organization',
+    //         object_id: id,
+    //         old_data: oldData,
+    //         new_data: null,
+    //         user_id: userId
+    //     });
+    //
+    //     return { message: 'Organization deleted' };
+    // }
 
     static async getById(client, id) {
         const { rows } = await client.query(

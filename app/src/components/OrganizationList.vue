@@ -1,0 +1,65 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+
+const router = useRouter()
+const organizations = ref([])
+const loading = ref(false)
+
+const fetchOrganizations = async () => {
+  loading.value = true
+  try {
+    const { data } = await axios.get('/api/organizations')
+    organizations.value = data
+  } catch (error) {
+    alert('Failed to load organizations')
+  } finally {
+    loading.value = false
+  }
+}
+
+const deleteOrganization = async (id) => {
+  if (!confirm('Вы уверены, что хотите удалить эту организацию?')) return
+  try {
+    await axios.delete(`/api/organizations/${id}`)
+    await fetchOrganizations()
+    alert('Организация успешно удалена')
+  } catch (error) {
+    alert('Не удалось удалить организацию')
+  }
+}
+
+onMounted(fetchOrganizations)
+</script>
+
+<template>
+  <div>
+    <h1>Organizations</h1>
+    <button @click="router.push('/organizations/new')">Add New</button>
+
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="organizations.length === 0">No organizations found</div>
+    <table v-else>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Comment</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="org in organizations" :key="org.id">
+        <td>{{ org.id }}</td>
+        <td>{{ org.name }}</td>
+        <td>{{ org.comment }}</td>
+        <td>
+          <button @click="router.push(`/organizations/edit/${org.id}`)">Edit</button>
+          <button @click="deleteOrganization(org.id)">Delete</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
