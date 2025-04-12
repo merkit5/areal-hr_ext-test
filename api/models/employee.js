@@ -37,7 +37,6 @@ class Employee {
         const employee_id = employee.id;
 
         await ChangeHistory.logAction(client, {
-            action: 'create',
             object_type: 'employee',
             object_id: employee_id,
             old_data: null,
@@ -73,7 +72,6 @@ class Employee {
 
         const newData = await this.getByIdFull(client, id);
         await ChangeHistory.logAction(client, {
-            action: 'update',
             object_type: 'employee',
             object_id: id,
             old_data: oldData,
@@ -105,7 +103,6 @@ class Employee {
         await client.query('UPDATE employee SET deleted_at = current_timestamp WHERE id = $1', [id]);
 
         await ChangeHistory.logAction(client, {
-            action: 'delete',
             object_type: 'employee',
             object_id: id,
             old_data: oldData,

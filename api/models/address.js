@@ -11,7 +11,6 @@ class Address {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'update',
             object_type: 'address',
             object_id: newData.id,
             old_data: oldData,
@@ -27,7 +26,6 @@ class Address {
         await client.query('UPDATE address SET deleted_at = current_timestamp WHERE employee_id = $1', [employee_id]);
 
         await ChangeHistory.logAction(client, {
-            action: 'delete',
             object_type: 'address',
             object_id: oldData.id,
             old_data: oldData,
@@ -46,7 +44,6 @@ class Address {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'create',
             object_type: 'address',
             object_id: newData.id,
             old_data: null,

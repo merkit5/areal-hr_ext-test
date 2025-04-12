@@ -15,7 +15,8 @@ class OrganizationController {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            const newOrganization = await Organization.create(client, req.body, req.user.id);
+            const userId = req.user?.id || 1;
+            const newOrganization = await Organization.create(client, req.body, userId);
             await client.query('COMMIT');
             res.status(201).json(newOrganization);
         } catch (err) {

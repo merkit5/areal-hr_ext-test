@@ -7,24 +7,34 @@ class Organization {
         return rows;
     }
 
-    static async create(client, { name, comment }, userId) {
+    static async create(client, { name, comment }) {
         const { rows } = await client.query(
-            'INSERT INTO organization (name, comment) VALUES ($1, $2) RETURNING *',
+            `INSERT INTO organization (name, comment) 
+         VALUES ($1, $2) 
+         RETURNING id, name, comment, created_at`,
             [name, comment]
         );
-        const newData = rows[0];
 
-        await ChangeHistory.logAction(client, {
-            action: 'create',
-            object_type: 'organization',
-            object_id: newData.id,
-            old_data: null,
-            new_data: newData,
-            user_id: userId
-        });
-
-        return newData;
+        return rows[0];
     }
+
+    // static async create(client, { name, comment }, userId) {
+    //     const { rows } = await client.query(
+    //         'INSERT INTO organization (name, comment) VALUES ($1, $2) RETURNING *',
+    //         [name, comment]
+    //     );
+    //     const newData = rows[0];
+    //
+    //     await ChangeHistory.logAction(client, {
+    //         object_type: 'organization',
+    //         object_id: newData.id,
+    //         old_data: null,
+    //         new_data: newData,
+    //         user_id: userId
+    //     });
+    //
+    //     return newData;
+    // }
 
     static async update(client, id, { name, comment }, userId) {
         const oldData = await this.getById(client, id);
@@ -35,7 +45,6 @@ class Organization {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'update',
             object_type: 'organization',
             object_id: id,
             old_data: oldData,
@@ -51,7 +60,6 @@ class Organization {
         await client.query('UPDATE organization SET deleted_at = current_timestamp WHERE id = $1', [id]);
 
         await ChangeHistory.logAction(client, {
-            action: 'delete',
             object_type: 'organization',
             object_id: id,
             old_data: oldData,

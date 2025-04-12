@@ -1,11 +1,19 @@
 const pool = require('../config/db');
 
 class ChangeHistory {
-    static async logAction(client, { action, object_type, object_id, old_data, new_data, user_id }) {
+    static async logAction(client, { object_type, object_id, old_data, new_data, user_id }) {
+        const changes = {
+            old: old_data,
+            new: new_data
+        };
+
         const { rows } = await client.query(
-            'INSERT INTO change_history (date, action, object_type, object_id, old_data, new_data, user_id) VALUES (NOW(), $1, $2, $3, $4, $5, $6) RETURNING *',
-            [action, object_type, object_id, old_data, new_data, user_id]
+            `INSERT INTO change_history (date, object_type, object_id, changes, user_id)
+             VALUES (NOW(), $1, $2, $3, $4)
+             RETURNING *`,
+            [object_type, object_id, changes, user_id]
         );
+
         return rows[0];
     }
 

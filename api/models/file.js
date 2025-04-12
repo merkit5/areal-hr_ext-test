@@ -11,7 +11,6 @@ class File {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'update',
             object_type: 'file',
             object_id: newData.id,
             old_data: oldData,
@@ -27,7 +26,6 @@ class File {
         await client.query('DELETE FROM file WHERE employee_id = $1', [employee_id]);
 
         await ChangeHistory.logAction(client, {
-            action: 'delete',
             object_type: 'file',
             object_id: oldData.id,
             old_data: oldData,
@@ -46,7 +44,6 @@ class File {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'create',
             object_type: 'file',
             object_id: newData.id,
             old_data: null,

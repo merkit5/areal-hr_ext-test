@@ -15,7 +15,6 @@ class User {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'create',
             object_type: 'user',
             object_id: newData.id,
             old_data: null,
@@ -35,7 +34,6 @@ class User {
         const newData = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'update',
             object_type: 'user',
             object_id: id,
             old_data: oldData,
@@ -51,7 +49,6 @@ class User {
         await client.query('DELETE FROM "user" WHERE id = $1', [id]);
 
         await ChangeHistory.logAction(client, {
-            action: 'delete',
             object_type: 'user',
             object_id: id,
             old_data: oldData,

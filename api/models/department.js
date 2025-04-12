@@ -15,7 +15,6 @@ class Department {
         const newDepartment = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'create',
             object_type: 'department',
             object_id: newDepartment.id,
             old_data: null,
@@ -49,7 +48,6 @@ class Department {
         const updatedDepartment = rows[0];
 
         await ChangeHistory.logAction(client, {
-            action: 'update',
             object_type: 'department',
             object_id: id,
             old_data: oldData,
@@ -71,7 +69,6 @@ class Department {
         if (rowCount === 0) throw new Error('Department not found');
 
         await ChangeHistory.logAction(client, {
-            action: 'delete',
             object_type: 'department',
             object_id: id,
             old_data: oldData,
