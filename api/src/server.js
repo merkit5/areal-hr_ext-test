@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./config/db');
-require('dotenv').config({path: '../.env'});
+require('dotenv').config({path: '../../.env'});
 
 const organizationRouter = require('./routes/organizationRouter');
 const departmentRouter = require('./routes/departmentRouter');

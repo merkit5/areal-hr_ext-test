@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import { fetchOrganization, createOrganization, updateOrganization } from "@/services/organization.js";
 
 const route = useRoute()
 const router = useRouter()
@@ -12,7 +12,7 @@ const isLoading = ref(false)
 onMounted(async () => {
   try {
     isLoading.value = true
-    const response = await axios.get(`/api/organizations/${route.params.id}`)
+    const response = await fetchOrganization(route.params.id)
     form.value = {
       name: response.data.name || '',
       comment: response.data.comment || ''
@@ -27,11 +27,7 @@ onMounted(async () => {
 const submitForm = async () => {
   error.value = null
   try {
-    const response = await axios.put(
-        `/api/organizations/${route.params.id}`,
-        form.value,
-        { headers: { 'Content-Type': 'application/json' } }
-    )
+    await updateOrganization(route.params.id, form.value)
     router.push('/organizations')
   } catch (err) {
     error.value = err.response?.data?.error || err.message

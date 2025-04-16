@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import { fetchOrganization, createOrganization, updateOrganization } from "@/services/organization.js";
 
 const route = useRoute()
 const router = useRouter()
-
 const isEditMode = !!route.params.id
 const form = ref({ name: '', comment: '' })
 const error = ref(null)
@@ -16,7 +15,7 @@ onMounted(async () => {
 
   isLoading.value = true
   try {
-    const { data } = await axios.get(`/api/organizations/${route.params.id}`)
+    const { data } = await fetchOrganization(route.params.id)
     form.value = data
   } catch (err) {
     error.value = err.response?.data?.error || err.message
@@ -29,9 +28,9 @@ const submitForm = async () => {
   error.value = null
   try {
     if (isEditMode) {
-      await axios.put(`/api/organizations/${route.params.id}`, form.value)
+      await updateOrganization(route.params.id, form.value)
     } else {
-      await axios.post('/api/organizations', form.value)
+      await createOrganization(form.value)
     }
 
     router.push('/organizations')

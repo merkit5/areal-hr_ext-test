@@ -1,16 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { fetchAllOrganizations, deleteOrganization} from "@/services/organization.js";
 
 const router = useRouter()
 const organizations = ref([])
 const loading = ref(false)
 
-const fetchOrganizations = async () => {
+
+const load = async () => {
   loading.value = true
   try {
-    const { data } = await axios.get('/api/organizations')
+    const { data } = await fetchAllOrganizations()
     organizations.value = data
   } catch (error) {
     alert('Failed to load organizations')
@@ -19,18 +20,18 @@ const fetchOrganizations = async () => {
   }
 }
 
-const deleteOrganization = async (id) => {
+const remove = async (id) => {
   if (!confirm('Вы уверены, что хотите удалить эту организацию?')) return
   try {
-    await axios.delete(`/api/organizations/${id}`)
-    await fetchOrganizations()
+    await deleteOrganization(id)
+    await load()
     alert('Организация успешно удалена')
   } catch (error) {
     alert('Не удалось удалить организацию')
   }
 }
 
-onMounted(fetchOrganizations)
+onMounted(load)
 </script>
 
 <template>
@@ -56,7 +57,7 @@ onMounted(fetchOrganizations)
         <td>{{ org.comment }}</td>
         <td>
           <button @click="router.push(`/organizations/edit/${org.id}`)">Edit</button>
-          <button @click="deleteOrganization(org.id)">Delete</button>
+          <button @click="remove(org.id)">Delete</button>
         </td>
       </tr>
       </tbody>
