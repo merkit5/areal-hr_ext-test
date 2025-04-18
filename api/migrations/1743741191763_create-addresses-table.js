@@ -23,6 +23,9 @@ exports.up = (pgm) => {
         street: {
             type: 'varchar(255)'
         },
+        house: {
+            type: 'varchar(10)'
+        },
         building: {
             type: 'varchar(10)'
         },

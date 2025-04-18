@@ -19,12 +19,9 @@ class OrganizationController {
 
             res.json(organization);
         } catch (err) {
-            res.status(500).json({ error: err.message });
-        } finally {
-            client.release();
+            res.status(500).json({error: err.message});
         }
     }
-
 
 
     static async create(req, res) {

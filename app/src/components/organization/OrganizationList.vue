@@ -41,7 +41,7 @@ onMounted(load)
 
     <div v-if="loading">Loading...</div>
     <div v-else-if="organizations.length === 0">No organizations found</div>
-    <table v-else>
+    <table v-else class="organization-table">
       <thead>
       <tr>
         <th>ID</th>
@@ -64,3 +64,26 @@ onMounted(load)
     </table>
   </div>
 </template>
+
+<style scoped>
+.organization-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.organization-table th, .organization-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.organization-table th {
+  background-color: #f2f2f2;
+}
+
+button {
+  margin-right: 0.5rem;
+  padding: 0.3rem 0.6rem;
+}
+</style>

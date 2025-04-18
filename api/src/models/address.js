@@ -2,11 +2,11 @@ const pool = require('../config/db');
 const ChangeHistory = require('./change_history');
 
 class Address {
-    static async updateFull(client, employee_id, { region, locality, street, house, building }, userId) {
+    static async updateFull(client, employee_id, { region, locality, street, house, building, apartment }, userId) {
         const oldData = await this.getById(client, employee_id);
         const { rows } = await client.query(
-            'UPDATE address SET region = $1, locality = $2, street = $3, house = $4, building = $5, updated_at = current_timestamp WHERE employee_id = $6 AND deleted_at IS NULL RETURNING *',
-            [region, locality, street, house, building, employee_id]
+            'UPDATE address SET region = $1, locality = $2, street = $3, house = $4, building = $5, apartment= $6 updated_at = current_timestamp WHERE employee_id = $7 AND deleted_at IS NULL RETURNING *',
+            [region, locality, street, house, building, apartment, employee_id]
         );
         const newData = rows[0];
 
@@ -36,10 +36,10 @@ class Address {
         return { message: 'Address deleted' };
     }
 
-    static async create(client, { region, locality, street, house, building, employee_id }, userId) {
+    static async create(client, { region, locality, street, house, building, apartment, employee_id }, userId) {
         const { rows } = await client.query(
-            'INSERT INTO address (region, locality, street, house, building, employee_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [region, locality, street, house, building, employee_id]
+            'INSERT INTO address (region, locality, street, house, building, apartment, employee_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [region, locality, street, house, building, apartment, employee_id]
         );
         const newData = rows[0];
 
