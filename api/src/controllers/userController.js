@@ -1,5 +1,7 @@
 const pool = require('../config/db');
 const User = require('../models/user');
+const HROperations = require("../models/hr_operations");
+const Organization = require("../models/organization");
 
 class UserController {
     static async getAll(req, res) {
@@ -11,11 +13,25 @@ class UserController {
         }
     }
 
+    static async getById(req, res) {
+        const client = await pool.connect();
+        try {
+            const id = parseInt(req.params.id);
+            const user = await User.getById(client, id);
+
+            res.json(user);
+        } catch (err) {
+            res.status(500).json({error: err.message});
+        }
+    }
+
     static async create(req, res) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            const newUser = await User.create(client, req.body, req.user.id);
+            const userId = req.user?.id || 1;
+            const newUser = await User.create(client, req.body, userId);
+            // const newUser = await User.create(client, req.body, req.user.id);
             await client.query('COMMIT');
             res.status(201).json(newUser);
         } catch (err) {
@@ -30,7 +46,8 @@ class UserController {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            const updatedUser = await User.update(client, req.params.id, req.body, req.user.id);
+            const userId = req.user?.id || 1;
+            const updatedUser = await User.update(client, req.params.id, req.body, userId);
             if (!updatedUser) {
                 return res.status(404).json({ error: 'User not found' });
             }
@@ -48,7 +65,9 @@ class UserController {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            await User.delete(client, req.params.id, req.user.id);
+            const userId = req.user?.id || 1;
+            await User.delete(client, req.params.id, userId);
+            // await User.delete(client, req.params.id, req.user.id);
             await client.query('COMMIT');
             res.json({ message: 'User deleted' });
         } catch (err) {

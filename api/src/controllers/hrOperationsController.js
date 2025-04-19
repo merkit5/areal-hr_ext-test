@@ -1,5 +1,7 @@
 const pool = require('../config/db');
 const HROperations = require('../models/hr_operations');
+const Department = require("../models/department");
+const Organization = require("../models/organization");
 
 class HROperationsController {
     static async getAll(req, res) {
@@ -11,11 +13,25 @@ class HROperationsController {
         }
     }
 
+    static async getById(req, res) {
+        const client = await pool.connect();
+        try {
+            const id = parseInt(req.params.id);
+            const hrOperations = await HROperations.getById(client, id);
+
+            res.json(hrOperations);
+        } catch (err) {
+            res.status(500).json({error: err.message});
+        }
+    }
+
     static async create(req, res) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            const newOperation = await HROperations.create(client, req.body, req.user.id);
+            const userId = req.user?.id || 1;
+            const newOperation = await HROperations.create(client, req.body, userId);
+            // const newOperation = await HROperations.create(client, req.body, req.user.id);
             await client.query('COMMIT');
             res.status(201).json(newOperation);
         } catch (err) {
@@ -30,7 +46,9 @@ class HROperationsController {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            const updatedOperation = await HROperations.update(client, req.params.id, req.body, req.user.id);
+            const userId = req.user?.id || 1;
+            const updatedOperation = await HROperations.update(client, req.params.id, req.body, userId);
+            // const updatedOperation = await HROperations.update(client, req.params.id, req.body, req.user.id);
             if (!updatedOperation) {
                 return res.status(404).json({ error: 'HR Operation not found' });
             }
@@ -48,7 +66,9 @@ class HROperationsController {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            await HROperations.delete(client, req.params.id, req.user.id);
+            const userId = req.user?.id || 1;
+            await HROperations.delete(client, req.params.id, userId);
+            // await HROperations.delete(client, req.params.id, req.user.id);
             await client.query('COMMIT');
             res.json({ message: 'HR Operation deleted' });
         } catch (err) {

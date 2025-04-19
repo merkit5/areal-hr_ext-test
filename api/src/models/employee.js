@@ -17,7 +17,7 @@ class Employee {
         const [employee] = employees;
 
         const { rows: passports } = await client.query('SELECT * FROM passport WHERE employee_id = $1', [id]);
-        const { rows: addresses } = await client.query('SELECT * FROM address WHERE employee_id = $1 AND deleted_at IS NULL', [id]);
+        const { rows: addresses } = await client.query('SELECT * FROM address WHERE employee_id = $1', [id]);
         const { rows: files } = await client.query('SELECT * FROM file WHERE employee_id = $1', [id]);
 
         return {
@@ -28,7 +28,7 @@ class Employee {
         };
     }
 
-    static async createFull(client, { first_name, last_name, patronymic, birth_date, passport, address, files }, userId) {
+    static async createFull(client, { first_name, last_name, patronymic, birth_date, passport, address, files }, userId = 1) {
         const { rows: [employee] } = await client.query(
             'INSERT INTO employee (first_name, last_name, patronymic, birth_date) VALUES ($1, $2, $3, $4) RETURNING *',
             [first_name, last_name, patronymic, birth_date]
@@ -61,7 +61,7 @@ class Employee {
         return await this.getByIdFull(client, employee_id);
     }
 
-    static async updateFull(client, id, { first_name, last_name, patronymic, birth_date, passport, address, files }, userId) {
+    static async updateFull(client, id, { first_name, last_name, patronymic, birth_date, passport, address, files }, userId = 1) {
         const oldData = await this.getByIdFull(client, id);
         if (!oldData) throw new Error('Employee not found');
 
@@ -88,15 +88,17 @@ class Employee {
         }
 
         if (files) {
+            await client.query('DELETE FROM file WHERE employee_id = $1', [id]);
+
             for (const file of files) {
-                await File.updateFull(client, id, { ...file }, userId);
+                await File.create(client, { ...file, employee_id: id }, userId);
             }
         }
 
-        return newData;
+        return await this.getByIdFull(client, id);
     }
 
-    static async deleteFull(client, id, userId) {
+    static async deleteFull(client, id, userId = 1) {
         const oldData = await this.getByIdFull(client, id);
         if (!oldData) throw new Error('Employee not found');
 

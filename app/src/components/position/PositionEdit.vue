@@ -29,7 +29,7 @@ const submitForm = async () => {
   error.value = null
   try {
     await updatePosition(route.params.id, form.value)
-    alert('Position updated successfully!')
+    alert('Position updated!')
     router.push('/positions')
   } catch (err) {
     error.value = err.response?.data?.error || err.message

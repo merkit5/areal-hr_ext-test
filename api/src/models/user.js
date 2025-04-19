@@ -7,7 +7,7 @@ class User {
         return rows;
     }
 
-    static async create(client, { first_name, last_name, patronymic, login, password, role }, userId) {
+    static async create(client, { first_name, last_name, patronymic, login, password, role }, userId = 1) {
         const { rows } = await client.query(
             'INSERT INTO "user" (first_name, last_name, patronymic, login, password, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [first_name, last_name, patronymic, login, password, role]
@@ -25,7 +25,7 @@ class User {
         return newData;
     }
 
-    static async update(client, id, { first_name, last_name, patronymic, login, password, role }, userId) {
+    static async update(client, id, { first_name, last_name, patronymic, login, password, role }, userId = 1) {
         const oldData = await this.getById(client, id);
         const { rows } = await client.query(
             'UPDATE "user" SET first_name = $1, last_name = $2, patronymic = $3, login = $4, password = $5, role = $6, updated_at = current_timestamp WHERE id = $7 RETURNING *',
@@ -44,7 +44,7 @@ class User {
         return newData;
     }
 
-    static async delete(client, id, userId) {
+    static async delete(client, id, userId = 1) {
         const oldData = await this.getById(client, id);
         await client.query('DELETE FROM "user" WHERE id = $1', [id]);
 

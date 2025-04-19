@@ -20,13 +20,13 @@ const load = async () => {
 }
 
 const remove = async (id) => {
-  if (!confirm('Вы уверены, что хотите удалить этот департамент?')) return
+  if (!confirm('Are you sure you want to delete this department?')) return
   try {
     await deleteDepartment(id)
     departments.value = departments.value.filter(dept => dept.id !== id)
-    alert('Департамент успешно удален')
+    alert('Department deleted')
   } catch (error) {
-    alert('Не удалось удалить департамент')
+    alert('Failed to delete department')
     console.error('Delete error:', error)
   }
 }
@@ -40,7 +40,7 @@ onMounted(load)
     <button @click="router.push('/departments/new')">Add New Department</button>
 
     <div v-if="loading">Loading...</div>
-    <div v-else-if="departments.length === 0">No departments found</div>
+    <div v-else-if="departments.length === 0"></div>
     <table v-else class="department-table">
       <thead>
       <tr>

@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const EmployeeController = require('../controllers/employeeController');
-const { validateCreateEmployee, validateUpdateEmployee } = require('../validators/employeeValidator');
+const upload = require('../middleware/upload');
 
 router.get('/', EmployeeController.getAll);
 router.get('/:id', EmployeeController.getByIdFull);
-router.post('/', validateCreateEmployee, EmployeeController.createFull);
-router.put('/:id', validateUpdateEmployee, EmployeeController.updateFull);
+router.post('/', upload.array('files'), EmployeeController.createFull);
+router.put('/:id',  upload.array('files'), EmployeeController.updateFull);
 router.delete('/:id', EmployeeController.deleteFull);
 
 module.exports = router;

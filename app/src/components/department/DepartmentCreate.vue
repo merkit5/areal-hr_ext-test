@@ -33,7 +33,7 @@ const submitForm = async () => {
   error.value = null
   try {
     await createDepartment(form.value)
-    alert('Department created successfully!')
+    alert('Department created')
     router.push('/departments')
   } catch (err) {
     error.value = err.response?.data?.error || err.message

@@ -45,11 +45,11 @@ const submitForm = async () => {
   error.value = null
   try {
     await updateDepartment(route.params.id, form.value)
-    alert('Department updated successfully!')
+    alert('Department updated')
     router.push('/departments')
   } catch (err) {
     error.value = err.response?.data?.error || err.message
-    console.error('Error updating department:', err)
+    console.error('Error updating', err)
   }
 }
 </script>
@@ -57,7 +57,7 @@ const submitForm = async () => {
 <template>
   <div>
     <h1>Edit Department</h1>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading"></div>
     <div v-else>
       <div v-if="error" class="error">{{ error }}</div>
       <form @submit.prevent="submitForm" class="department-form">

@@ -1,9 +1,13 @@
 const Joi = require('joi');
 
 const createHrOperationSchema = Joi.object({
+    operation_type: Joi.string()
+        .required(),
     salary: Joi.number()
         .positive()
         .precision(2)
+        .required(),
+    date: Joi.date()
         .required(),
     employee_id: Joi.number()
         .integer()
@@ -20,9 +24,17 @@ const createHrOperationSchema = Joi.object({
 });
 
 const updateHrOperationSchema = Joi.object({
+    id: Joi.number()
+        .integer()
+        .positive(),
+    operation_type: Joi.string(),
     salary: Joi.number()
         .positive()
         .precision(2),
+    date: Joi.date(),
+    employee_id: Joi.number()
+        .integer()
+        .positive(),
     department_id: Joi.number()
         .integer()
         .positive()
@@ -31,7 +43,7 @@ const updateHrOperationSchema = Joi.object({
         .integer()
         .positive()
         .allow(null),
-}).min(1);
+}).min(1).unknown(true);
 
 module.exports = {
     validateCreateHrOperation: (req, res, next) => {

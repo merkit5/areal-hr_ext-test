@@ -13,6 +13,16 @@ import PositionList from '../components/position/PositionList.vue'
 import PositionCreate from '../components/position/PositionCreate.vue'
 import PositionEdit from '../components/position/PositionEdit.vue'
 
+import EmployeeList from '../components/employee/EmployeeList.vue'
+import EmployeeForm from '../components/employee/EmployeeForm.vue'
+
+import HROperationsList from '../components/hrOperations/HROperationsList.vue'
+import HROperationForm from '../components/hrOperations/HROperationForm.vue'
+
+import UserList from '../components/user/UserList.vue';
+import UserForm from '../components/user/UserForm.vue';
+
+import ChangeHistoryList from '../components/changeHistory/ChangeHistoryList.vue';
 
 const routes = [
     {
@@ -64,7 +74,57 @@ const routes = [
         path: '/positions/edit/:id',
         name: 'edit-position',
         component: PositionEdit
-    }
+    },
+    {
+        path: '/employees',
+        name: 'EmployeeList',
+        component: EmployeeList
+    },
+    {
+        path: '/employees/new',
+        name: 'EmployeeCreate',
+        component: EmployeeForm
+    },
+    {
+        path: '/employees/edit/:id',
+        name: 'EmployeeEdit',
+        component: EmployeeForm,
+    },
+    {
+        path: '/hr-operations',
+        name: 'hr-operations',
+        component: HROperationsList
+    },
+    {
+        path: '/hr-operations/new',
+        name: 'create-hr-operation',
+        component: HROperationForm
+    },
+    {
+        path: '/hr-operations/edit/:id',
+        name: 'edit-hr-operation',
+        component: HROperationForm,
+    },
+    {
+        path: '/users',
+        name: 'UserList',
+        component: UserList
+    },
+    {
+        path: '/users/create',
+        name: 'UserCreate',
+        component: UserForm
+    },
+    {
+        path: '/users/edit/:id',
+        name: 'UserEdit',
+        component: UserForm,
+    },
+    {
+        path: '/changeHistory',
+        name: 'change-history',
+        component: ChangeHistoryList
+    },
 ]
 
 const router = createRouter({

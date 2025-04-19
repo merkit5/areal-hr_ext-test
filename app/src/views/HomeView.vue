@@ -14,15 +14,24 @@ const navigateTo = (path) => {
     <div class="card-grid">
       <div class="card" @click="navigateTo('/organizations')">
         <h2>Organizations</h2>
-        <p>Manage company organizations</p>
       </div>
       <div class="card" @click="navigateTo('/departments')">
         <h2>Departments</h2>
-        <p>Manage company departments</p>
       </div>
       <div class="card" @click="navigateTo('/positions')">
         <h2>Positions</h2>
-        <p>Manage company positions</p>
+      </div>
+      <div class="card" @click="navigateTo('/employees')">
+        <h2>Employees</h2>
+      </div>
+      <div class="card" @click="navigateTo('/hr-operations')">
+        <h2>Hr operations</h2>
+      </div>
+      <div class="card" @click="navigateTo('/users')">
+        <h2>Users</h2>
+      </div>
+      <div class="card" @click="navigateTo('/changeHistory')">
+        <h2>Change history</h2>
       </div>
     </div>
   </div>
@@ -42,7 +51,6 @@ h1 {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
@@ -52,12 +60,6 @@ h1 {
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .card h2 {

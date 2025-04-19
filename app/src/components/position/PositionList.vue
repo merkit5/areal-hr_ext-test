@@ -20,13 +20,13 @@ const load = async () => {
 }
 
 const remove = async (id) => {
-  if (!confirm('Вы уверены, что хотите удалить эту должность?')) return
+  if (!confirm('Are you sure you want to delete this post?')) return
   try {
     await deletePosition(id)
     positions.value = positions.value.filter(pos => pos.id !== id)
-    alert('Должность успешно удалена')
+    alert('Position deleted')
   } catch (error) {
-    alert('Не удалось удалить должность')
+    alert('Failed to delete post')
     console.error('Delete error:', error)
   }
 }
