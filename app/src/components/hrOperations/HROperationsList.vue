@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { fetchAllHROperations, deleteHROperation } from "@/services/hrOperations.js";
+import AppButton from '@/components/UI/AppButton.vue'
 
 const router = useRouter()
 const operations = ref([])
@@ -36,7 +37,7 @@ onMounted(loadOperations)
 <template>
   <div>
     <h1>HR Operations</h1>
-    <button @click="router.push('/hr-operations/new')">Add New</button>
+    <AppButton @click="router.push('/hr-operations/new')">Add New</AppButton>
 
     <div v-if="loading">Loading...</div>
     <div v-else-if="operations.length === 0">No operations found</div>
@@ -59,8 +60,8 @@ onMounted(loadOperations)
         <td>{{ op.salary }}</td>
         <td>{{ op.employee_id }}</td>
         <td>
-          <button @click="router.push(`/hr-operations/edit/${op.id}`)">Edit</button>
-          <button @click="removeOperation(op.id)">Delete</button>
+          <AppButton @click="router.push(`/hr-operations/edit/${op.id}`)">Edit</AppButton>
+          <AppButton @click="removeOperation(op.id)">Delete</AppButton>
         </td>
       </tr>
       </tbody>
@@ -73,20 +74,5 @@ onMounted(loadOperations)
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-}
-
-.operations-table th, .operations-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.operations-table th {
-  background-color: #f2f2f2;
-}
-
-button {
-  margin-right: 0.5rem;
-  padding: 0.3rem 0.6rem;
 }
 </style>

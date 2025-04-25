@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchOrganization, createOrganization, updateOrganization } from "@/services/organization.js";
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -50,10 +52,7 @@ const submitForm = async () => {
       <div v-if="error" class="error">{{ error }}</div>
 
       <form @submit.prevent="submitForm" class="organization-form" v-else>
-        <div class="form-group">
-          <label>Name:</label>
-          <input v-model="form.name" required />
-        </div>
+        <AppInput label="Name" v-model="form.name" required />
 
         <div class="form-group">
           <label>Comment:</label>
@@ -61,8 +60,8 @@ const submitForm = async () => {
         </div>
 
         <div class="form-actions">
-          <button type="button" @click="router.push('/organizations')">Cancel</button>
-          <button type="submit">{{ isEditMode ? 'Update' : 'Create' }}</button>
+          <AppButton type="button" @click="router.push('/organizations')">Cancel</AppButton>
+          <AppButton type="submit">{{ isEditMode ? 'Update' : 'Create' }}</AppButton>
         </div>
       </form>
     </div>
@@ -75,15 +74,6 @@ const submitForm = async () => {
   margin: 0 auto;
 }
 
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-}
-
 .form-group input,
 .form-group textarea,
 .form-group select {
@@ -91,12 +81,4 @@ const submitForm = async () => {
   padding: 0.5rem;
 }
 
-.form-actions {
-  margin-top: 1.5rem;
-}
-
-.error {
-  color: red;
-  margin-bottom: 1rem;
-}
 </style>

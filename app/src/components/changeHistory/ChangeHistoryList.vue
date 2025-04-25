@@ -59,13 +59,6 @@ onMounted(load);
   border-collapse: collapse;
 }
 
-.change-history-table th,
-.change-history-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
 .change-history-table th {
   background-color: #f2f2f2;
 }

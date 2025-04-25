@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchEmployee, createEmployee, updateEmployee } from "@/services/employee.js";
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -118,86 +120,29 @@ onMounted(async () => {
       <form @submit.prevent="submitForm" class="employee-form">
         <fieldset>
           <legend>Basic Information</legend>
-          <div class="form-group">
-            <label>Last Name:</label>
-            <input v-model="form.last_name" required />
-          </div>
-
-          <div class="form-group">
-            <label>First Name:</label>
-            <input v-model="form.first_name" required />
-          </div>
-
-          <div class="form-group">
-            <label>Middle Name:</label>
-            <input v-model="form.patronymic" />
-          </div>
-
-          <div class="form-group">
-            <label>Date of Birth:</label>
-            <input type="date" v-model="form.birth_date" required />
-          </div>
+          <AppInput label="Last Name" v-model="form.last_name" required />
+          <AppInput label="First Name" v-model="form.first_name" required />
+          <AppInput label="Middle Name" v-model="form.patronymic" />
+          <AppInput label="Date of Birth" type="date" v-model="form.birth_date" required />
         </fieldset>
 
         <fieldset>
           <legend>Passport Details</legend>
-          <div class="form-group">
-            <label>Series:</label>
-            <input v-model="form.passport.series" required />
-          </div>
-
-          <div class="form-group">
-            <label>Number:</label>
-            <input v-model="form.passport.number" required />
-          </div>
-
-          <div class="form-group">
-            <label>Issue Date:</label>
-            <input type="date" v-model="form.passport.issue_date" required />
-          </div>
-
-          <div class="form-group">
-            <label>Issuer Code:</label>
-            <input v-model="form.passport.issuer_code" required />
-          </div>
-
-          <div class="form-group">
-            <label>Issued By:</label>
-            <input v-model="form.passport.issuer" required />
-          </div>
+          <AppInput label="Series" v-model="form.passport.series" required />
+          <AppInput label="Number" v-model="form.passport.number" required />
+          <AppInput label="Issue Date" type="date" v-model="form.passport.issue_date" required />
+          <AppInput label="Issuer Code" v-model="form.passport.issuer_code" required />
+          <AppInput label="Issued By" v-model="form.passport.issuer" required />
         </fieldset>
 
         <fieldset>
           <legend>Address</legend>
-          <div class="form-group">
-            <label>Region:</label>
-            <input v-model="form.address.region" required />
-          </div>
-
-          <div class="form-group">
-            <label>Locality:</label>
-            <input v-model="form.address.locality" required />
-          </div>
-
-          <div class="form-group">
-            <label>Street:</label>
-            <input v-model="form.address.street" required />
-          </div>
-
-          <div class="form-group">
-            <label>House:</label>
-            <input v-model="form.address.house" required />
-          </div>
-
-          <div class="form-group">
-            <label>Building:</label>
-            <input v-model="form.address.building" />
-          </div>
-
-          <div class="form-group">
-            <label>Apartment:</label>
-            <input v-model="form.address.apartment" />
-          </div>
+          <AppInput label="Region" v-model="form.address.region" required />
+          <AppInput label="Locality" v-model="form.address.locality" required />
+          <AppInput label="Street" v-model="form.address.street" required />
+          <AppInput label="House" v-model="form.address.house" required />
+          <AppInput label="Building" v-model="form.address.building" />
+          <AppInput label="Apartment" v-model="form.address.apartment" />
         </fieldset>
 
         <fieldset>
@@ -210,14 +155,14 @@ onMounted(async () => {
           <div v-if="form.files.length" class="files-list">
             <div v-for="(file, index) in form.files" :key="index" class="file-item">
               <span>{{ file.name }}</span>
-              <button type="button" @click="removeFile(index)">×</button>
+              <AppButton type="button" @click="removeFile(index)">×</AppButton>
             </div>
           </div>
         </fieldset>
 
         <div class="form-actions">
-          <button type="button" @click="router.push('/employees')">Cancel</button>
-          <button type="submit">{{ isEditMode ? 'Update' : 'Create' }}</button>
+          <AppButton type="button" @click="router.push('/employees')">Cancel</AppButton>
+          <AppButton type="submit">{{ isEditMode ? 'Update' : 'Create' }}</AppButton>
         </div>
       </form>
     </div>
@@ -230,52 +175,9 @@ onMounted(async () => {
   margin: 0 auto;
 }
 
-fieldset {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-legend {
-  padding: 0 0.5rem;
-  font-weight: bold;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-}
-
 .form-group input {
   width: 100%;
   padding: 0.5rem;
 }
 
-.form-actions {
-  margin-top: 1.5rem;
-  text-align: right;
-}
-
-.files-list {
-  margin-top: 1rem;
-}
-
-.file-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  background: #f5f5f5;
-  margin-bottom: 0.5rem;
-}
-
-.error {
-  color: red;
-  margin-bottom: 1rem;
-}
 </style>

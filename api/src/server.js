@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const pool = require('./config/db');
-require('dotenv').config({path: '../../.env'});
+require('dotenv').config({ path: '../.env' });
 
 const organizationRouter = require('./routes/organizationRouter');
 const departmentRouter = require('./routes/departmentRouter');
@@ -26,5 +25,5 @@ app.use('/api/changeHistory', changeHistoryRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`http://localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}`);
 });

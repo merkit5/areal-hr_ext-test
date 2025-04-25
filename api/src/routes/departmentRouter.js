@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const departmentController = require('../controllers/departmentController');
-const { validateCreateDepartment, validateUpdateDepartment } = require('../validators/departmentValidator');
+const {
+  validateCreateDepartment,
+  validateUpdateDepartment,
+} = require('../validators/departmentValidator');
 
 router.get('/', departmentController.getAll);
 router.get('/parents', departmentController.getParents);

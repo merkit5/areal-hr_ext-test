@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const organizationController = require('../controllers/organizationController');
-const { validateCreateOrganization, validateUpdateOrganization } = require('../validators/organizationValidator');
+const {
+  validateCreateOrganization,
+  validateUpdateOrganization,
+} = require('../validators/organizationValidator');
 
 router.get('/', organizationController.getAll);
 router.get('/:id', organizationController.getById);

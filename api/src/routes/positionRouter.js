@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const positionController = require('../controllers/positionController');
-const { validateCreatePosition, validateUpdatePosition } = require('../validators/positionValidator');
+const {
+  validateCreatePosition,
+  validateUpdatePosition,
+} = require('../validators/positionValidator');
 
 router.get('/', positionController.getAll);
 router.get('/:id', positionController.getById);

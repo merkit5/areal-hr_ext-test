@@ -2,6 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchUser, createUser, updateUser } from "@/services/user";
+import AppButton from '@/components/UI/AppButton.vue';
+import AppInput from '@/components/UI/AppInput.vue';
+import AppSelect from '@/components/UI/AppSelect.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -88,25 +91,10 @@ const submitForm = async () => {
       <div v-if="error" class="error">{{ error }}</div>
 
       <form @submit.prevent="submitForm" class="user-form">
-        <div class="form-group">
-          <label>Last Name:</label>
-          <input v-model="form.last_name" required />
-        </div>
-
-        <div class="form-group">
-          <label>First Name:</label>
-          <input v-model="form.first_name" required />
-        </div>
-
-        <div class="form-group">
-          <label>Middle Name:</label>
-          <input v-model="form.patronymic" />
-        </div>
-
-        <div class="form-group">
-          <label>Login:</label>
-          <input v-model="form.login" required />
-        </div>
+        <AppInput label="Last Name" v-model="form.last_name" required />
+        <AppInput label="First Name" v-model="form.first_name" required />
+        <AppInput label="Middle Name" v-model="form.patronymic" />
+        <AppInput label="Login" v-model="form.login" required />
 
         <div class="form-group">
           <label>Password:</label>
@@ -116,34 +104,23 @@ const submitForm = async () => {
                 v-model="form.password"
                 :required="!isEditMode"
             />
-            <button
+            <AppButton
                 type="button"
                 @click="showPassword = !showPassword"
                 class="toggle-password"
             >
               {{ showPassword ? 'Hide' : 'Show' }}
-            </button>
+            </AppButton>
           </div>
           <small v-if="isEditMode">Leave blank if you don't want to change the password</small>
           <small v-else>Password must be at least 8 characters long</small>
         </div>
 
-        <div class="form-group">
-          <label>Role:</label>
-          <select v-model="form.role" required>
-            <option
-                v-for="role in roles"
-                :key="role.value"
-                :value="role.value"
-            >
-              {{ role.label }}
-            </option>
-          </select>
-        </div>
+        <AppSelect label="Role" v-model="form.role" :options="roles" required />
 
         <div class="form-actions">
-          <button type="button" @click="router.push('/users')">Cancel</button>
-          <button type="submit">{{ isEditMode ? 'Update' : 'Create' }}</button>
+          <AppButton type="button" @click="router.push('/users')">Cancel</AppButton>
+          <AppButton type="submit">{{ isEditMode ? 'Update' : 'Create' }}</AppButton>
         </div>
       </form>
     </div>
@@ -156,15 +133,6 @@ const submitForm = async () => {
   margin: 0 auto;
 }
 
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-}
-
 .form-group input,
 .form-group select {
   width: 100%;
@@ -174,34 +142,5 @@ const submitForm = async () => {
 .password-input {
   display: flex;
   gap: 0.5rem;
-}
-
-.password-input input {
-  flex-grow: 1;
-}
-
-.toggle-password {
-  padding: 0.5rem;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.form-actions {
-  margin-top: 1.5rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.error {
-  color: red;
-  margin-bottom: 1rem;
-}
-
-small {
-  display: block;
-  margin-top: 0.3rem;
-  color: #666;
-  font-size: 0.8rem;
 }
 </style>

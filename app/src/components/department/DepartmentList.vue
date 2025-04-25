@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { fetchAllDepartments, deleteDepartment } from "@/services/department.js";
+import AppButton from '@/components/UI/AppButton.vue'
 
 const router = useRouter()
 const departments = ref([])
@@ -37,7 +38,7 @@ onMounted(load)
 <template>
   <div>
     <h1>Departments</h1>
-    <button @click="router.push('/departments/new')">Add New Department</button>
+    <AppButton @click="router.push('/departments/new')">Add New Department</AppButton>
 
     <div v-if="loading">Loading...</div>
     <div v-else-if="departments.length === 0"></div>
@@ -60,8 +61,8 @@ onMounted(load)
         <td>{{ dept.organization_id }}</td>
         <td>{{ dept.parent_id || '-' }}</td>
         <td>
-          <button @click="router.push(`/departments/edit/${dept.id}`)">Edit</button>
-          <button @click="remove(dept.id)">Delete</button>
+          <AppButton @click="router.push(`/departments/edit/${dept.id}`)">Edit</AppButton>
+          <AppButton @click="remove(dept.id)">Delete</AppButton>
         </td>
       </tr>
       </tbody>
@@ -74,20 +75,5 @@ onMounted(load)
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-}
-
-.department-table th, .department-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.department-table th {
-  background-color: #f2f2f2;
-}
-
-button {
-  margin-right: 0.5rem;
-  padding: 0.3rem 0.6rem;
 }
 </style>

@@ -2,6 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { createDepartment, fetchOrganizations, fetchParentDepartments } from "@/services/department.js";
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
+import AppSelect from '@/components/UI/AppSelect.vue'
 
 const router = useRouter()
 const form = ref({
@@ -50,38 +53,14 @@ const submitForm = async () => {
     <div v-if="loading">Loading data...</div>
 
     <form @submit.prevent="submitForm" class="department-form" v-else>
-      <div class="form-group">
-        <label>Name:</label>
-        <input v-model="form.name" required />
-      </div>
-
-      <div class="form-group">
-        <label>Comment:</label>
-        <textarea v-model="form.comment"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Organization:</label>
-        <select v-model="form.organization_id" required>
-          <option v-for="org in organizations" :key="org.id" :value="org.id">
-            {{ org.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Parent Department (optional):</label>
-        <select v-model="form.parent_id">
-          <option :value="null">None</option>
-          <option v-for="dept in parentDepartments" :key="dept.id" :value="dept.id">
-            {{ dept.name }}
-          </option>
-        </select>
-      </div>
+      <AppInput v-model="form.name" label="Name:" required id="name" />
+      <AppInput v-model="form.comment" label="Comment:" id="comment" />
+      <AppSelect v-model="form.organization_id" label="Organization:" :options="organizations.map(org => ({ value: org.id, label: org.name }))" required id="organization" />
+      <AppSelect v-model="form.parent_id" label="Parent Department (optional):" :options="[{ value: null, label: 'None' }, ...parentDepartments.map(dept => ({ value: dept.id, label: dept.name }))]" id="parent" />
 
       <div class="form-actions">
-        <button type="button" @click="router.push('/departments')">Cancel</button>
-        <button type="submit">Create</button>
+        <AppButton type="button" @click="router.push('/departments')">Cancel</AppButton>
+        <AppButton type="submit">Create</AppButton>
       </div>
     </form>
   </div>
@@ -91,30 +70,5 @@ const submitForm = async () => {
 .department-form {
   max-width: 600px;
   margin: 0 auto;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 0.5rem;
-}
-
-.form-actions {
-  margin-top: 1.5rem;
-}
-
-.error {
-  color: red;
-  margin-bottom: 1rem;
 }
 </style>

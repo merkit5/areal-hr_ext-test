@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchAllOrganizations, deleteOrganization} from "@/services/organization.js";
+import { fetchAllOrganizations, deleteOrganization } from "@/services/organization.js";
+import AppButton from '@/components/UI/AppButton.vue'
 
 const router = useRouter()
 const organizations = ref([])
 const loading = ref(false)
-
 
 const load = async () => {
   loading.value = true
@@ -37,7 +37,7 @@ onMounted(load)
 <template>
   <div>
     <h1>Organizations</h1>
-    <button @click="router.push('/organizations/new')">Add New</button>
+    <AppButton @click="router.push('/organizations/new')">Add New</AppButton>
 
     <div v-if="loading">Loading...</div>
     <div v-else-if="organizations.length === 0">No organizations found</div>
@@ -56,8 +56,8 @@ onMounted(load)
         <td>{{ org.name }}</td>
         <td>{{ org.comment }}</td>
         <td>
-          <button @click="router.push(`/organizations/edit/${org.id}`)">Edit</button>
-          <button @click="remove(org.id)">Delete</button>
+          <AppButton @click="router.push(`/organizations/edit/${org.id}`)">Edit</AppButton>
+          <AppButton @click="remove(org.id)">Delete</AppButton>
         </td>
       </tr>
       </tbody>
@@ -70,20 +70,5 @@ onMounted(load)
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-}
-
-.organization-table th, .organization-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.organization-table th {
-  background-color: #f2f2f2;
-}
-
-button {
-  margin-right: 0.5rem;
-  padding: 0.3rem 0.6rem;
 }
 </style>

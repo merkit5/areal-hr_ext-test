@@ -9,6 +9,9 @@ import {
   fetchDepartments,
   fetchPositions
 } from "@/services/hrOperations.js";
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
+import AppSelect from '@/components/UI/AppSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -83,66 +86,34 @@ const submitForm = async () => {
       <div v-if="error" class="error">{{ error }}</div>
 
       <form @submit.prevent="submitForm" class="operation-form">
-        <div class="form-group">
-          <label>Operation Type:</label>
-          <input v-model="form.operation_type" required/>
-        </div>
+        <AppInput label="Operation Type" v-model="form.operation_type" required />
+        <AppInput label="Salary" type="number" v-model.number="form.salary" required />
+        <AppInput label="Date" type="date" v-model="form.date" required />
 
-        <div class="form-group">
-          <label>Salary:</label>
-          <input type="number" v-model.number="form.salary" required />
-        </div>
+        <AppSelect
+            label="Employee ID"
+            v-model="form.employee_id"
+            :options="employees.map(emp => ({ value: emp.id, label: `${emp.last_name} ${emp.first_name} (ID: ${emp.id})` }))"
+            required
+        />
 
-        <div class="form-group">
-          <label>Date:</label>
-          <input type="date" v-model="form.date" required />
-        </div>
+        <AppSelect
+            label="Department ID"
+            v-model="form.department_id"
+            :options="departments.map(dept => ({ value: dept.id, label: `${dept.name} (ID: ${dept.id})` }))"
+            required
+        />
 
-        <div class="form-group">
-          <label>Employee ID:</label>
-          <select v-model="form.employee_id" required>
-            <option value="">Select Employee</option>
-            <option
-                v-for="emp in employees"
-                :key="emp.id"
-                :value="emp.id"
-            >
-              {{ emp.last_name }} {{ emp.first_name }} (ID: {{ emp.id }})
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Department ID:</label>
-          <select v-model="form.department_id" required>
-            <option value="">Select Department</option>
-            <option
-                v-for="dept in departments"
-                :key="dept.id"
-                :value="dept.id"
-            >
-              {{ dept.name }} (ID: {{ dept.id }})
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Position ID:</label>
-          <select v-model="form.position_id" required>
-            <option value="">Select Position</option>
-            <option
-                v-for="pos in positions"
-                :key="pos.id"
-                :value="pos.id"
-            >
-              {{ pos.title }} (ID: {{ pos.id }})
-            </option>
-          </select>
-        </div>
+        <AppSelect
+            label="Position ID"
+            v-model="form.position_id"
+            :options="positions.map(pos => ({ value: pos.id, label: `${pos.title} (ID: ${pos.id})` }))"
+            required
+        />
 
         <div class="form-actions">
-          <button type="button" @click="router.push('/hr-operations')">Cancel</button>
-          <button type="submit">{{ isEditMode ? 'Update' : 'Create' }}</button>
+          <AppButton type="button" @click="router.push('/hr-operations')">Cancel</AppButton>
+          <AppButton type="submit">{{ isEditMode ? 'Update' : 'Create' }}</AppButton>
         </div>
       </form>
     </div>
@@ -153,30 +124,5 @@ const submitForm = async () => {
 .operation-form {
   max-width: 600px;
   margin: 0 auto;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.5rem;
-}
-
-.form-actions {
-  margin-top: 1.5rem;
-}
-
-.error {
-  color: red;
-  margin-bottom: 1rem;
 }
 </style>

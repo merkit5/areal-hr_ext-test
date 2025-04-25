@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { fetchUsers, deleteUser } from '@/services/user';
+import AppButton from '@/components/UI/AppButton.vue';
 
 const router = useRouter();
 const users = ref([]);
@@ -52,7 +53,7 @@ const handleDelete = async (id) => {
     <div v-else>
       <div v-if="error" class="error">{{ error }}</div>
 
-      <button @click="handleCreate">Create New User</button>
+      <AppButton @click="handleCreate">Create New User</AppButton>
 
       <table v-if="users.length > 0">
         <thead>
@@ -75,8 +76,8 @@ const handleDelete = async (id) => {
           <td>{{ user.login }}</td>
           <td>{{ user.role }}</td>
           <td>
-            <button @click="handleEdit(user.id)">Edit</button>
-            <button @click="handleDelete(user.id)">Delete</button>
+            <AppButton @click="handleEdit(user.id)">Edit</AppButton>
+            <AppButton @click="handleDelete(user.id)">Delete</AppButton>
           </td>
         </tr>
         </tbody>
@@ -91,24 +92,5 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f2f2f2;
-}
-
-button {
-  margin-right: 0.5rem;
-}
-
-.error {
-  color: red;
-  margin-bottom: 1rem;
 }
 </style>

@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const hrOperationsController = require('../controllers/hrOperationsController');
-const { validateCreateHrOperation, validateUpdateHrOperation } = require('../validators/hrOperationsValidator');
+const {
+  validateCreateHrOperation,
+  validateUpdateHrOperation,
+} = require('../validators/hrOperationsValidator');
 
 router.get('/', hrOperationsController.getAll);
 router.get('/:id', hrOperationsController.getById);

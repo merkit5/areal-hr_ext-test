@@ -5,9 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "start": "node src/server.js",
     "migrate:create": "node-pg-migrate create",
-    "migrate:up": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down"
+    "migrate:up": "node pg-migrate-runner.js up",
+    "migrate:down": "node pg-migrate-runner.js down"
   },
   "keywords": [],
   "author": "",
@@ -15,11 +18,21 @@
   "dependencies": {
     "@nestjs/passport": "^11.0.5",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "joi": "^17.13.3",
     "multer": "^1.4.5-lts.2",
     "node-pg-migrate": "^7.9.1",
-    "pg": "^8.14.1"
+    "pg": "^8.15.5",
+    "pg-pool": "^3.9.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@types/eslint": "^9.6.1",
+    "eslint": "^9.25.1",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3"
   }
 }
