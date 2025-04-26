@@ -27,9 +27,7 @@ class HROperationsController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      const newOperation = await HROperations.create(client, req.body, userId);
-      // const newOperation = await HROperations.create(client, req.body, req.user.id);
+      const newOperation = await HROperations.create(client, req.body, req.user.id);
       await client.query('COMMIT');
       res.status(201).json(newOperation);
     } catch (err) {
@@ -44,9 +42,7 @@ class HROperationsController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      const updatedOperation = await HROperations.update(client, req.params.id, req.body, userId);
-      // const updatedOperation = await HROperations.update(client, req.params.id, req.body, req.user.id);
+      const updatedOperation = await HROperations.update(client, req.params.id, req.body, req.user.id);
       if (!updatedOperation) {
         return res.status(404).json({ error: 'HR Operation not found' });
       }
@@ -64,9 +60,7 @@ class HROperationsController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      await HROperations.delete(client, req.params.id, userId);
-      // await HROperations.delete(client, req.params.id, req.user.id);
+      await HROperations.delete(client, req.params.id, req.user.id);
       await client.query('COMMIT');
       res.json({ message: 'HR Operation deleted' });
     } catch (err) {

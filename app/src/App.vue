@@ -1,5 +1,32 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, onMounted, provide } from 'vue';
+import { useRouter } from 'vue-router';
+import { checkAuth, logout } from '@/services/auth';
+
+const router = useRouter();
+const isAuthenticated = ref(false);
+
+const checkAuthentication = async () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    const authStatus = await checkAuth();
+    isAuthenticated.value = authStatus.authenticated;
+  } else {
+    isAuthenticated.value = false;
+  }
+};
+
+onMounted(checkAuthentication);
+
+const handleLogout = async () => {
+  await logout();
+  isAuthenticated.value = false;
+  localStorage.removeItem('token');
+  router.push('/login');
+};
+
+provide('isAuthenticated', isAuthenticated);
+provide('checkAuthentication', checkAuthentication);
 </script>
 
 <template>
@@ -13,6 +40,10 @@ import { RouterLink, RouterView } from 'vue-router'
       <RouterLink to="/hr-operations">Hr operations</RouterLink>
       <RouterLink to="/users">Users</RouterLink>
       <RouterLink to="/changeHistory">ChangeHistory</RouterLink>
+      <RouterLink v-if="isAuthenticated" to="/profile">Profile</RouterLink>
+      <RouterLink v-if="!isAuthenticated" to="/login">Login</RouterLink>
+      <RouterLink v-if="!isAuthenticated" to="/register">Registration</RouterLink>
+      <button v-if="isAuthenticated" @click="handleLogout">Log out</button>
     </nav>
   </header>
 

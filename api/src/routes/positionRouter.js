@@ -5,11 +5,12 @@ const {
   validateCreatePosition,
   validateUpdatePosition,
 } = require('../validators/positionValidator');
+const authenticate = require('../middleware/authenticate');
 
-router.get('/', positionController.getAll);
-router.get('/:id', positionController.getById);
-router.post('/', validateCreatePosition, positionController.create);
-router.put('/:id', validateUpdatePosition, positionController.update);
-router.delete('/:id', positionController.delete);
+router.get('/', authenticate, positionController.getAll);
+router.get('/:id', authenticate, positionController.getById);
+router.post('/', authenticate, validateCreatePosition, positionController.create);
+router.put('/:id', authenticate, validateUpdatePosition, positionController.update);
+router.delete('/:id', authenticate, positionController.delete);
 
 module.exports = router;

@@ -75,6 +75,36 @@ class UserController {
       client.release();
     }
   }
+
+  static async getCurrentUser(req, res) {
+    const client = await pool.connect();
+    try {
+      const user = await User.getById(client, req.user.id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json(user);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
+    }
+  }
+
+  static async updateCurrentUser(req, res) {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const updatedUser = await User.update(client, req.user.id, req.body, req.user.id);
+      await client.query('COMMIT');
+      res.json(updatedUser);
+    } catch (err) {
+      await client.query('ROLLBACK');
+      res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
+    }
+  }
 }
 
 module.exports = UserController;

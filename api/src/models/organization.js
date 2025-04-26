@@ -7,7 +7,7 @@ class Organization {
     return rows;
   }
 
-  static async create(client, { name, comment }, userId = 1) {
+  static async create(client, { name, comment }, userId) {
     const { rows } = await client.query(
       'INSERT INTO organization (name, comment) VALUES ($1, $2) RETURNING *',
       [name, comment]
@@ -25,7 +25,7 @@ class Organization {
     return newData;
   }
 
-  static async update(client, id, { name, comment }, userId = 1) {
+  static async update(client, id, { name, comment }, userId) {
     const oldData = await this.getById(client, id);
     const { rows } = await client.query(
       'UPDATE organization SET name = $1, comment = $2, updated_at = current_timestamp WHERE id = $3 RETURNING *',
@@ -44,7 +44,7 @@ class Organization {
     return newData;
   }
 
-  static async delete(client, id, userId = 1) {
+  static async delete(client, id, userId) {
     const oldData = await this.getById(client, id);
     await client.query('UPDATE organization SET deleted_at = current_timestamp WHERE id = $1', [
       id,

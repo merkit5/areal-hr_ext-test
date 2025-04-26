@@ -4,7 +4,7 @@ class Address {
   static async create(
     client,
     { region, locality, street, house, building, apartment, employee_id },
-    userId = 1
+    userId
   ) {
     const { rows } = await client.query(
       'INSERT INTO address (region, locality, street, house, building, apartment, employee_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
@@ -27,7 +27,7 @@ class Address {
     client,
     employee_id,
     { region, locality, street, house, building, apartment },
-    userId = 1
+    userId
   ) {
     const oldData = await this.getById(client, employee_id);
     const { rows } = await client.query(
@@ -47,20 +47,24 @@ class Address {
     return newData;
   }
 
-  static async deleteFull(client, employee_id, userId = 1) {
+  static async deleteFull(client, employee_id, userId) {
     const oldData = await this.getById(client, employee_id);
+
     await client.query('DELETE FROM address WHERE employee_id = $1', [employee_id]);
 
-    await ChangeHistory.logAction(client, {
-      object_type: 'address',
-      object_id: oldData.id,
-      old_data: oldData,
-      new_data: null,
-      user_id: userId,
-    });
+    if (oldData) {
+      await ChangeHistory.logAction(client, {
+        object_type: 'address',
+        object_id: oldData.id,
+        old_data: oldData,
+        new_data: null,
+        user_id: userId,
+      });
+    }
 
     return { message: 'Address deleted' };
   }
+
 
   static async getById(client, employee_id) {
     const { rows } = await client.query('SELECT * FROM address WHERE employee_id = $1', [

@@ -5,11 +5,12 @@ const {
   validateCreateHrOperation,
   validateUpdateHrOperation,
 } = require('../validators/hrOperationsValidator');
+const authenticate = require('../middleware/authenticate');
 
-router.get('/', hrOperationsController.getAll);
-router.get('/:id', hrOperationsController.getById);
-router.post('/', validateCreateHrOperation, hrOperationsController.create);
-router.put('/:id', validateUpdateHrOperation, hrOperationsController.update);
-router.delete('/:id', hrOperationsController.delete);
+router.get('/', authenticate, hrOperationsController.getAll);
+router.get('/:id', authenticate, hrOperationsController.getById);
+router.post('/', authenticate, validateCreateHrOperation, hrOperationsController.create);
+router.put('/:id', authenticate, validateUpdateHrOperation, hrOperationsController.update);
+router.delete('/:id', authenticate, hrOperationsController.delete);
 
 module.exports = router;

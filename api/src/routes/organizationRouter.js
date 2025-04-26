@@ -5,11 +5,12 @@ const {
   validateCreateOrganization,
   validateUpdateOrganization,
 } = require('../validators/organizationValidator');
+const authenticate = require('../middleware/authenticate');
 
-router.get('/', organizationController.getAll);
-router.get('/:id', organizationController.getById);
-router.post('/', validateCreateOrganization, organizationController.create);
-router.put('/:id', validateUpdateOrganization, organizationController.update);
-router.delete('/:id', organizationController.delete);
+router.get('/', authenticate, organizationController.getAll);
+router.get('/:id', authenticate, organizationController.getById);
+router.post('/', authenticate, validateCreateOrganization, organizationController.create);
+router.put('/:id', authenticate, validateUpdateOrganization, organizationController.update);
+router.delete('/:id', authenticate, organizationController.delete);
 
 module.exports = router;

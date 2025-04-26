@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config({ path: '../.env' });
 
+
 const organizationRouter = require('./routes/organizationRouter');
 const departmentRouter = require('./routes/departmentRouter');
 const positionRouter = require('./routes/positionRouter');
@@ -9,12 +10,14 @@ const employeeRouter = require('./routes/employeeRouter');
 const hrOperationsRouter = require('./routes/hrOperationsRouter');
 const userRouter = require('./routes/userRouter');
 const changeHistoryRouter = require('./routes/changeHistoryRouter');
+const authRouter = require('./routes/authRoutes');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/auth', authRouter);
 app.use('/api/organizations', organizationRouter);
 app.use('/api/departments', departmentRouter);
 app.use('/api/positions', positionRouter);

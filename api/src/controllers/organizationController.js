@@ -27,8 +27,7 @@ class OrganizationController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      const newOrganization = await Organization.create(client, req.body, userId);
+      const newOrganization = await Organization.create(client, req.body, req.user.id);
       await client.query('COMMIT');
       res.status(201).json(newOrganization);
     } catch (err) {
@@ -43,14 +42,7 @@ class OrganizationController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      const updatedOrganization = await Organization.update(
-        client,
-        req.params.id,
-        req.body,
-        userId
-      );
-      // const updatedOrganization = await Organization.update(client, req.params.id, req.body, req.user.id);
+      const updatedOrganization = await Organization.update(client, req.params.id, req.body, req.user.id);
       if (!updatedOrganization) {
         return res.status(404).json({ error: 'Organization not found' });
       }
@@ -68,9 +60,7 @@ class OrganizationController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      await Organization.delete(client, req.params.id, userId);
-      // await Organization.delete(client, req.params.id, req.user.id);
+      await Organization.delete(client, req.params.id, req.user.id);
       await client.query('COMMIT');
       res.status(204).end();
     } catch (err) {

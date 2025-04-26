@@ -37,9 +37,7 @@ class EmployeeController {
         path: file.path,
       }));
       parsedData.files = files;
-      const userId = req.user?.id || 1;
-      const newEmployee = await Employee.createFull(client, parsedData, userId);
-      // const newEmployee = await Employee.createFull(client, req.body, req.user.id);
+      const newEmployee = await Employee.createFull(client, parsedData, req.user.id);
       await client.query('COMMIT');
       res.status(201).json(newEmployee);
     } catch (err) {
@@ -60,9 +58,7 @@ class EmployeeController {
         path: file.path,
       }));
       parsedData.files = files;
-      const userId = req.user?.id || 1;
-      const updatedEmployee = await Employee.updateFull(client, req.params.id, parsedData, userId);
-      // const updatedEmployee = await Employee.updateFull(client, req.params.id, req.body, req.user.id);
+      const updatedEmployee = await Employee.updateFull(client, req.params.id, parsedData, req.user.id);
       await client.query('COMMIT');
       res.json(updatedEmployee);
     } catch (err) {
@@ -77,9 +73,7 @@ class EmployeeController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      await Employee.deleteFull(client, req.params.id, userId);
-      // await Employee.deleteFull(client, req.params.id, req.user.id);
+      await Employee.deleteFull(client, req.params.id, req.user.id);
       await client.query('COMMIT');
       res.json({ message: 'Employee deleted' });
     } catch (err) {

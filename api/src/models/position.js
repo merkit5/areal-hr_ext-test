@@ -7,7 +7,7 @@ class Position {
     return rows;
   }
 
-  static async create(client, { name }, userId = 1) {
+  static async create(client, { name }, userId) {
     const { rows } = await client.query('INSERT INTO position (name) VALUES ($1) RETURNING *', [
       name,
     ]);
@@ -24,7 +24,7 @@ class Position {
     return newData;
   }
 
-  static async update(client, id, { name }, userId = 1) {
+  static async update(client, id, { name }, userId) {
     const oldData = await this.getById(client, id);
     const { rows } = await client.query(
       'UPDATE position SET name = $1, updated_at = current_timestamp WHERE id = $2 RETURNING *',
@@ -43,7 +43,7 @@ class Position {
     return newData;
   }
 
-  static async delete(client, id, userId = 1) {
+  static async delete(client, id, userId) {
     const oldData = await this.getById(client, id);
     await client.query('UPDATE position SET deleted_at = current_timestamp WHERE id = $1', [id]);
 

@@ -4,7 +4,7 @@ class Passport {
   static async create(
     client,
     { series, number, issue_date, issuer_code, issuer, employee_id },
-    userId = 1
+    userId
   ) {
     const { rows } = await client.query(
       'INSERT INTO passport (series, number, issue_date, issuer_code, issuer, employee_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
@@ -27,7 +27,7 @@ class Passport {
     client,
     employee_id,
     { series, number, issue_date, issuer_code, issuer },
-    userId = 1
+    userId
   ) {
     const oldData = await this.getById(client, employee_id);
     const { rows } = await client.query(
@@ -47,20 +47,24 @@ class Passport {
     return newData;
   }
 
-  static async deleteFull(client, employee_id, userId = 1) {
+  static async deleteFull(client, employee_id, userId) {
     const oldData = await this.getById(client, employee_id);
+
     await client.query('DELETE FROM passport WHERE employee_id = $1', [employee_id]);
 
-    await ChangeHistory.logAction(client, {
-      object_type: 'passport',
-      object_id: oldData.id,
-      old_data: oldData,
-      new_data: null,
-      user_id: userId,
-    });
+    if (oldData) {
+      await ChangeHistory.logAction(client, {
+        object_type: 'passport',
+        object_id: oldData.id,
+        old_data: oldData,
+        new_data: null,
+        user_id: userId,
+      });
+    }
 
     return { message: 'Passport deleted' };
   }
+
 
   static async getById(client, employee_id) {
     const { rows } = await client.query('SELECT * FROM passport WHERE employee_id = $1', [

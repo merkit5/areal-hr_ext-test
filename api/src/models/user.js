@@ -1,5 +1,6 @@
 const pool = require('../config/db');
 const ChangeHistory = require('./change_history');
+const argon2 = require('argon2');
 
 class User {
   static async getAll() {
@@ -7,14 +8,11 @@ class User {
     return rows;
   }
 
-  static async create(
-    client,
-    { first_name, last_name, patronymic, login, password, role },
-    userId = 1
-  ) {
+  static async create(client, { first_name, last_name, patronymic, login, password, role }, userId = 1) {
+    const hashedPassword = await argon2.hash(password);
     const { rows } = await client.query(
       'INSERT INTO "user" (first_name, last_name, patronymic, login, password, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [first_name, last_name, patronymic, login, password, role]
+      [first_name, last_name, patronymic, login, hashedPassword, role]
     );
     const newData = rows[0];
 
@@ -29,16 +27,15 @@ class User {
     return newData;
   }
 
-  static async update(
-    client,
-    id,
-    { first_name, last_name, patronymic, login, password, role },
-    userId = 1
-  ) {
+  static async update(client, id, { first_name, last_name, patronymic, login, password, role }, userId = 1) {
     const oldData = await this.getById(client, id);
+    let hashedPassword = oldData.password;
+    if (password) {
+      hashedPassword = await argon2.hash(password);
+    }
     const { rows } = await client.query(
       'UPDATE "user" SET first_name = $1, last_name = $2, patronymic = $3, login = $4, password = $5, role = $6, updated_at = current_timestamp WHERE id = $7 RETURNING *',
-      [first_name, last_name, patronymic, login, password, role, id]
+      [first_name, last_name, patronymic, login, hashedPassword, role, id]
     );
     const newData = rows[0];
 
@@ -70,6 +67,11 @@ class User {
 
   static async getById(client, id) {
     const { rows } = await client.query('SELECT * FROM "user" WHERE id = $1', [id]);
+    return rows[0];
+  }
+
+  static async getByLogin(client, login) {
+    const { rows } = await client.query('SELECT * FROM "user" WHERE login = $1', [login]);
     return rows[0];
   }
 }

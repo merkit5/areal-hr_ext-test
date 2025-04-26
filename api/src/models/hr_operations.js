@@ -10,7 +10,7 @@ class HROperations {
   static async create(
     client,
     { operation_type, salary, date, employee_id, department_id, position_id },
-    userId = 1
+    userId
   ) {
     const { rows } = await client.query(
       'INSERT INTO hr_operations (operation_type, salary, date, employee_id, department_id, position_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
@@ -33,7 +33,7 @@ class HROperations {
     client,
     id,
     { operation_type, salary, date, employee_id, department_id, position_id },
-    userId = 1
+    userId
   ) {
     const oldData = await this.getById(client, id);
     const { rows } = await client.query(
@@ -53,7 +53,7 @@ class HROperations {
     return newData;
   }
 
-  static async delete(client, id, userId = 1) {
+  static async delete(client, id, userId) {
     const oldData = await this.getById(client, id);
     await client.query('DELETE FROM hr_operations WHERE id = $1', [id]);
 

@@ -7,7 +7,7 @@ class Department {
     return rows;
   }
 
-  static async create(client, { name, comment, organization_id, parent_id }, userId = 1) {
+  static async create(client, { name, comment, organization_id, parent_id }, userId) {
     const { rows } = await client.query(
       'INSERT INTO department (name, comment, organization_id, parent_id) VALUES ($1, $2, $3, $4) RETURNING *',
       [name, comment, organization_id, parent_id]
@@ -39,7 +39,7 @@ class Department {
     return rows[0];
   }
 
-  static async update(client, id, { name, comment, organization_id, parent_id }, userId = 1) {
+  static async update(client, id, { name, comment, organization_id, parent_id }, userId) {
     const oldData = await this.getById(client, id);
     if (!oldData) throw new Error('Department not found');
 
@@ -60,7 +60,7 @@ class Department {
     return updatedDepartment;
   }
 
-  static async delete(client, id, userId = 1) {
+  static async delete(client, id, userId) {
     const oldData = await this.getById(client, id);
     if (!oldData) throw new Error('Department not found');
 

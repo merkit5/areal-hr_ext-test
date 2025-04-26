@@ -36,9 +36,7 @@ class DepartmentController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1; // временная мера)
-      const newDepartment = await Department.create(client, req.body, userId);
-      // const newDepartment = await Department.create(client, req.body, req.user.id);
+      const newDepartment = await Department.create(client, req.body, req.user.id);
       await client.query('COMMIT');
       res.status(201).json(newDepartment);
     } catch (err) {
@@ -53,9 +51,7 @@ class DepartmentController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      const updatedDepartment = await Department.update(client, req.params.id, req.body, userId);
-      // const updatedDepartment = await Department.update(client, req.params.id, req.body, req.user.id);
+      const updatedDepartment = await Department.update(client, req.params.id, req.body, req.user.id);
       await client.query('COMMIT');
       res.json(updatedDepartment);
     } catch (err) {
@@ -70,9 +66,7 @@ class DepartmentController {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const userId = req.user?.id || 1;
-      await Department.delete(client, req.params.id, userId);
-      // await Department.delete(client, req.params.id, req.user.id);
+      await Department.delete(client, req.params.id, req.user.id);
       await client.query('COMMIT');
       res.status(204).end();
     } catch (err) {

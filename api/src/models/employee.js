@@ -38,7 +38,7 @@ class Employee {
   static async createFull(
     client,
     { first_name, last_name, patronymic, birth_date, passport, address, files },
-    userId = 1
+    userId
   ) {
     const {
       rows: [employee],
@@ -78,7 +78,7 @@ class Employee {
     client,
     id,
     { first_name, last_name, patronymic, birth_date, passport, address, files },
-    userId = 1
+    userId
   ) {
     const oldData = await this.getByIdFull(client, id);
     if (!oldData) throw new Error('Employee not found');
@@ -116,7 +116,7 @@ class Employee {
     return await this.getByIdFull(client, id);
   }
 
-  static async deleteFull(client, id, userId = 1) {
+  static async deleteFull(client, id, userId) {
     const oldData = await this.getByIdFull(client, id);
     if (!oldData) throw new Error('Employee not found');
 

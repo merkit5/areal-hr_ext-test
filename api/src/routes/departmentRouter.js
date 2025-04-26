@@ -5,12 +5,13 @@ const {
   validateCreateDepartment,
   validateUpdateDepartment,
 } = require('../validators/departmentValidator');
+const authenticate = require('../middleware/authenticate');
 
-router.get('/', departmentController.getAll);
-router.get('/parents', departmentController.getParents);
-router.get('/:id', departmentController.getById);
-router.post('/', validateCreateDepartment, departmentController.create);
-router.put('/:id', validateUpdateDepartment, departmentController.update);
-router.delete('/:id', departmentController.delete);
+router.get('/', authenticate, departmentController.getAll);
+router.get('/parents', authenticate, departmentController.getParents);
+router.get('/:id', authenticate, departmentController.getById);
+router.post('/', authenticate, validateCreateDepartment, departmentController.create);
+router.put('/:id', authenticate, validateUpdateDepartment, departmentController.update);
+router.delete('/:id', authenticate, departmentController.delete);
 
 module.exports = router;
