@@ -8,7 +8,7 @@ class User {
     return rows;
   }
 
-  static async create(client, { first_name, last_name, patronymic, login, password, role }, userId = 1) {
+  static async create(client, { first_name, last_name, patronymic, login, password, role }, userId) {
     const hashedPassword = await argon2.hash(password);
     const { rows } = await client.query(
       'INSERT INTO "user" (first_name, last_name, patronymic, login, password, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
@@ -27,7 +27,7 @@ class User {
     return newData;
   }
 
-  static async update(client, id, { first_name, last_name, patronymic, login, password, role }, userId = 1) {
+  static async update(client, id, { first_name, last_name, patronymic, login, password, role }, userId) {
     const oldData = await this.getById(client, id);
     let hashedPassword = oldData.password;
     if (password) {
@@ -50,7 +50,7 @@ class User {
     return newData;
   }
 
-  static async delete(client, id, userId = 1) {
+  static async delete(client, id, userId) {
     const oldData = await this.getById(client, id);
     await client.query('DELETE FROM "user" WHERE id = $1', [id]);
 

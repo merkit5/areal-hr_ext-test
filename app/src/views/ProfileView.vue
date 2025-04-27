@@ -1,3 +1,49 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { getUserData, updateUser, logout } from '@/services/auth';
+
+const router = useRouter();
+const user = ref(null);
+const isEditMode = ref(false);
+const editForm = ref({
+  first_name: '',
+  last_name: '',
+  patronymic: '',
+  login: ''
+});
+
+onMounted(async () => {
+  try {
+    const response = await getUserData();
+    user.value = response.data;
+    editForm.value = { ...response.data };
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+  }
+});
+
+const handleLogout = async () => {
+  try {
+    await logout();
+    localStorage.removeItem('token');
+    router.push('/login');
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
+
+const saveChanges = async () => {
+  try {
+    const response = await updateUser(editForm.value);
+    user.value = response.data;
+    isEditMode.value = false;
+  } catch (error) {
+    console.error('Failed to update user:', error);
+  }
+};
+</script>
+
 <template>
   <div class="profile-container">
     <h1>Личный кабинет</h1>
@@ -45,53 +91,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { getUserData, updateUser, logout } from '@/services/auth';
-
-const router = useRouter();
-const user = ref(null);
-const isEditMode = ref(false);
-const editForm = ref({
-  first_name: '',
-  last_name: '',
-  patronymic: '',
-  login: ''
-});
-
-// Загружаем данные пользователя
-onMounted(async () => {
-  try {
-    const response = await getUserData();
-    user.value = response.data;
-    editForm.value = { ...response.data };
-  } catch (error) {
-    console.error('Failed to fetch user data:', error);
-  }
-});
-
-const handleLogout = async () => {
-  try {
-    await logout();
-    localStorage.removeItem('token');
-    router.push('/login');
-  } catch (error) {
-    console.error('Logout failed:', error);
-  }
-};
-
-const saveChanges = async () => {
-  try {
-    const response = await updateUser(editForm.value);
-    user.value = response.data;
-    isEditMode.value = false;
-  } catch (error) {
-    console.error('Failed to update user:', error);
-  }
-};
-</script>
 
 <style scoped>
 .profile-container {

@@ -31,7 +31,6 @@ const handleLogin = async () => {
       <input v-model="loginData.password" type="password" placeholder="Password" required autocomplete="current-password" />
       <button type="submit">Login</button>
     </form>
-    <p>Нет аккаунта? <router-link to="/register">Зарегистрироваться</router-link></p>
     <div v-if="error">{{ error }}</div>
   </div>
 </template>

@@ -4,22 +4,6 @@ const argon2 = require('argon2');
 const pool = require('../config/db');
 
 class AuthController {
-  static async register(req, res) {
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      const { first_name, last_name, patronymic, login, password, role } = req.body;
-      const newUser = await User.create(client, { first_name, last_name, patronymic, login, password, role });
-      await client.query('COMMIT');
-      res.status(201).json(newUser);
-    } catch (err) {
-      await client.query('ROLLBACK');
-      res.status(500).json({ error: err.message });
-    } finally {
-      client.release();
-    }
-  }
-
   static async login(req, res) {
     const client = await pool.connect();
     try {

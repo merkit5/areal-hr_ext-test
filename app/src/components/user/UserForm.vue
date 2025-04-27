@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchUser, createUser, updateUser } from "@/services/user";
+import { checkAuth } from '@/services/auth';
 import AppButton from '@/components/UI/AppButton.vue';
 import AppInput from '@/components/UI/AppInput.vue';
 import AppSelect from '@/components/UI/AppSelect.vue';
@@ -15,19 +16,30 @@ const form = ref({
   patronymic: '',
   login: '',
   password: '',
-  role: 'hr'
+  role: 'manager'
 });
 const error = ref(null);
 const isLoading = ref(false);
 const showPassword = ref(false);
+const currentUserRole = ref('');
 
-const roles = [
-  { value: 'hr', label: 'HR' },
-  { value: 'manager', label: 'Manager' },
-  { value: 'admin', label: 'Administrator' }
-];
+const roles = computed(() => {
+  const allRoles = [
+    { value: 'manager', label: 'Manager' },
+    { value: 'admin', label: 'Administrator' }
+  ];
+
+  if (currentUserRole.value === 'manager') {
+    return allRoles.filter(r => r.value === 'manager');
+  }
+
+  return allRoles;
+});
 
 onMounted(async () => {
+  const auth = await checkAuth();
+  currentUserRole.value = auth.user?.role || '';
+
   if (isEditMode) {
     await loadUserData();
   }
@@ -42,7 +54,7 @@ const loadUserData = async () => {
       last_name: data.last_name,
       patronymic: data.patronymic || '',
       login: data.login,
-      password: data.password || '',
+      password: '',
       role: data.role
     };
   } catch (err) {
@@ -100,14 +112,14 @@ const submitForm = async () => {
           <label>Password:</label>
           <div class="password-input">
             <input
-                :type="showPassword ? 'text' : 'password'"
-                v-model="form.password"
-                :required="!isEditMode"
+              :type="showPassword ? 'text' : 'password'"
+              v-model="form.password"
+              :required="!isEditMode"
             />
             <AppButton
-                type="button"
-                @click="showPassword = !showPassword"
-                class="toggle-password"
+              type="button"
+              @click="showPassword = !showPassword"
+              class="toggle-password"
             >
               {{ showPassword ? 'Hide' : 'Show' }}
             </AppButton>
@@ -116,7 +128,13 @@ const submitForm = async () => {
           <small v-else>Password must be at least 8 characters long</small>
         </div>
 
-        <AppSelect label="Role" v-model="form.role" :options="roles" required />
+        <AppSelect
+          label="Role"
+          v-model="form.role"
+          :options="roles"
+          required
+          :disabled="currentUserRole !== 'admin'"
+        />
 
         <div class="form-actions">
           <AppButton type="button" @click="router.push('/users')">Cancel</AppButton>

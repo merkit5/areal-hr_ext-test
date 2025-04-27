@@ -42,7 +42,6 @@ provide('checkAuthentication', checkAuthentication);
       <RouterLink to="/changeHistory">ChangeHistory</RouterLink>
       <RouterLink v-if="isAuthenticated" to="/profile">Profile</RouterLink>
       <RouterLink v-if="!isAuthenticated" to="/login">Login</RouterLink>
-      <RouterLink v-if="!isAuthenticated" to="/register">Registration</RouterLink>
       <button v-if="isAuthenticated" @click="handleLogout">Log out</button>
     </nav>
   </header>

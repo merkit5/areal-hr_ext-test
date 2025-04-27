@@ -2,15 +2,19 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { fetchUsers, deleteUser } from '@/services/user';
+import { checkAuth } from '@/services/auth';
 import AppButton from '@/components/UI/AppButton.vue';
 
 const router = useRouter();
 const users = ref([]);
 const isLoading = ref(false);
 const error = ref(null);
+const currentUserRole = ref('');
 
 onMounted(async () => {
   await loadUsers();
+  const auth = await checkAuth();
+  currentUserRole.value = auth.user?.role || '';
 });
 
 const loadUsers = async () => {
@@ -53,7 +57,12 @@ const handleDelete = async (id) => {
     <div v-else>
       <div v-if="error" class="error">{{ error }}</div>
 
-      <AppButton @click="handleCreate">Create New User</AppButton>
+      <AppButton
+        @click="handleCreate"
+        v-if="currentUserRole === 'admin'"
+      >
+        Create New User
+      </AppButton>
 
       <table v-if="users.length > 0">
         <thead>
@@ -77,7 +86,12 @@ const handleDelete = async (id) => {
           <td>{{ user.role }}</td>
           <td>
             <AppButton @click="handleEdit(user.id)">Edit</AppButton>
-            <AppButton @click="handleDelete(user.id)">Delete</AppButton>
+            <AppButton
+              @click="handleDelete(user.id)"
+              v-if="currentUserRole === 'admin'"
+            >
+              Delete
+            </AppButton>
           </td>
         </tr>
         </tbody>

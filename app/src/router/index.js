@@ -25,7 +25,6 @@ import UserForm from '../components/user/UserForm.vue';
 import ChangeHistoryList from '../components/changeHistory/ChangeHistoryList.vue';
 
 import Login from '../views/Login.vue';
-import Register from '../views/Register.vue';
 import ProfileView from '../views/ProfileView.vue';
 
 const routes = [
@@ -38,11 +37,6 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login,
-    },
-    {
-        path: '/register',
-        name: 'register',
-        component: Register,
     },
     {
         path: '/organizations',

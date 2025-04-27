@@ -48,13 +48,13 @@ exports.up = async (pgm) => {
     ('Region 2', 'Locality 2', 'Street 2', '2', '2', '20', 2);
   `);
 
-  const adminPassword = await argon2.hash('password1');
-  const hrPassword = await argon2.hash('password2');
+  const adminPassword = await argon2.hash('admin');
+  const hrPassword = await argon2.hash('manager');
 
   await pgm.sql(`
     INSERT INTO "user" (first_name, last_name, patronymic, login, password, role) VALUES
     ('Admin', 'User', 'Adminovich', 'admin', '${adminPassword}', 'admin'),
-    ('HR', 'User', 'HRovich', 'user', '${hrPassword}', 'hr');
+    ('HR', 'User', 'HRovich', 'manager', '${hrPassword}', 'manager');
   `);
 
   await pgm.sql(`
