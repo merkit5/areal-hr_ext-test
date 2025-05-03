@@ -1,5 +1,7 @@
 const pool = require('../config/db');
 const Employee = require('../models/employee');
+const path = require('path');
+const fs = require('fs/promises');
 
 class EmployeeController {
   static async getAll(req, res) {
@@ -78,6 +80,32 @@ class EmployeeController {
       res.json({ message: 'Employee deleted' });
     } catch (err) {
       await client.query('ROLLBACK');
+      res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
+    }
+  }
+
+  static async downloadFile(req, res) {
+    const client = await pool.connect();
+    try {
+      const { id: employeeId, fileId } = req.params;
+
+      const { rows } = await client.query(
+        'SELECT * FROM file WHERE id = $1 AND employee_id = $2',
+        [fileId, employeeId]
+      );
+      const file = rows[0];
+      if (!file) return res.status(404).json({ error: 'Файл не найден' });
+
+      const absolutePath = path.resolve(file.path);
+      try {
+        await fs.access(absolutePath);
+        res.download(absolutePath, file.name);
+      } catch {
+        res.status(404).json({ error: 'Файл отсутствует на сервере' });
+      }
+    } catch (err) {
       res.status(500).json({ error: err.message });
     } finally {
       client.release();

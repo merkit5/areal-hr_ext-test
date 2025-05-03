@@ -4,7 +4,10 @@ const User = require('../models/user');
 const pool = require('../config/db');
 
 const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJwt.fromExtractors([
+    (req) => req.cookies.token,
+    ExtractJwt.fromAuthHeaderAsBearerToken(),
+  ]),
   secretOrKey: process.env.JWT_SECRET,
 };
 

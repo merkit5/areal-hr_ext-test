@@ -1,35 +1,33 @@
-import axios from 'axios'
+import axios from 'axios';
 
-const authHeaders = {
-    headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-    }
+const authConfig = {
+    withCredentials: true
 };
 
 export const fetchDepartment = (id) => {
-    return axios.get(`/api/departments/${id}`, authHeaders);
+    return axios.get(`/api/departments/${id}`, authConfig);
 };
 
 export const fetchAllDepartments = () => {
-    return axios.get(`/api/departments`, authHeaders);
+    return axios.get(`/api/departments`, authConfig);
 };
 
 export const fetchOrganizations = () => {
-    return axios.get(`/api/organizations`, authHeaders);
+    return axios.get(`/api/organizations`, authConfig);
 };
 
 export const fetchParentDepartments = () => {
-    return axios.get(`/api/departments/parents`, authHeaders);
+    return axios.get(`/api/departments/parents`, authConfig);
 };
 
 export const createDepartment = (data) => {
-    return axios.post(`/api/departments`, data, authHeaders);
+    return axios.post(`/api/departments`, data, authConfig);
 };
 
 export const updateDepartment = (id, data) => {
-    return axios.put(`/api/departments/${id}`, data, authHeaders);
+    return axios.put(`/api/departments/${id}`, data, authConfig);
 };
 
 export const deleteDepartment = (id) => {
-    return axios.delete(`/api/departments/${id}`, authHeaders);
+    return axios.delete(`/api/departments/${id}`, authConfig);
 };

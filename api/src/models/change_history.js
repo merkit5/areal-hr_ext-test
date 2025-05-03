@@ -7,8 +7,8 @@ class ChangeHistory {
 
     const { rows } = await client.query(
       `INSERT INTO change_history (date, object_type, object_id, changes, user_id)
-             VALUES (NOW(), $1, $2, $3, $4)
-             RETURNING *`,
+       VALUES (NOW(), $1, $2, $3, $4)
+           RETURNING *`,
       [object_type, object_id, changes, user_id]
     );
 
@@ -26,6 +26,11 @@ class ChangeHistory {
   static async getAll(client) {
     const { rows } = await client.query('SELECT * FROM change_history ORDER BY date DESC');
     return rows;
+  }
+
+  static async getUserData(client, userId) {
+    const { rows } = await client.query('SELECT first_name, last_name, patronymic FROM "user" WHERE id = $1', [userId]);
+    return rows[0];
   }
 }
 

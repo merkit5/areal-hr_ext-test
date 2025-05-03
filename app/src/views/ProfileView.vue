@@ -1,9 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
-import { getUserData, updateUser, logout } from '@/services/auth';
+import { getUserData, updateUser, logout, checkAuth } from '@/services/auth';
 
 const router = useRouter();
+const isAuthenticated = inject('isAuthenticated');
+const checkAuthentication = inject('checkAuthentication');
+
 const user = ref(null);
 const isEditMode = ref(false);
 const editForm = ref({
@@ -26,7 +29,7 @@ onMounted(async () => {
 const handleLogout = async () => {
   try {
     await logout();
-    localStorage.removeItem('token');
+    isAuthenticated.value = false;
     router.push('/login');
   } catch (error) {
     console.error('Logout failed:', error);

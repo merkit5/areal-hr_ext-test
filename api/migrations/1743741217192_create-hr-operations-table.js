@@ -5,16 +5,24 @@ exports.shorthands = undefined;
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
-
  */
 exports.up = (pgm) => {
+  pgm.createType('operation_type', [
+    'hire',
+    'fire',
+    'promote',
+    'demote',
+    'transfer'
+  ]);
+
+  // Создаем таблицу hr_operations
   pgm.createTable('hr_operations', {
     id: {
       type: 'serial',
       primaryKey: true,
     },
     operation_type: {
-      type: 'varchar(255)',
+      type: 'operation_type',
       notNull: true,
     },
     salary: {
@@ -54,8 +62,8 @@ exports.up = (pgm) => {
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
-
  */
 exports.down = (pgm) => {
   pgm.dropTable('hr_operations');
+  pgm.dropType('operation_type');
 };

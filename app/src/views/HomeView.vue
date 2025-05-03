@@ -1,15 +1,22 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { inject } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter()
 
+const isAuthenticated = inject('isAuthenticated');
+
 const navigateTo = (path) => {
-  router.push(path)
-}
+  if (isAuthenticated.value) {
+    router.push(path);
+  } else {
+    router.push('/login');
+  }
+};
 </script>
 
 <template>
-  <div class="home-container">
+  <div class="home-container" v-if="isAuthenticated">
     <h1>HR Management System</h1>
     <div class="card-grid">
       <div class="card" @click="navigateTo('/organizations')">

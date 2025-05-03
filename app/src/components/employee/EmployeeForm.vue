@@ -87,26 +87,55 @@ const submitForm = async () => {
   }
 }
 
+const downloadFile = async (file) => {
+  try {
+    const response = await fetch(`/api/employees/${route.params.id}/files/${file.id}/download`, {
+      credentials: 'include'
+    });
+
+    if (!response.ok) throw new Error('Download failed');
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('Download error:', err);
+    alert('Ошибка при скачивании файла.');
+  }
+};
+
+
 onMounted(async () => {
-  if (!isEditMode) return
+  if (!isEditMode) return;
 
   try {
-    loading.value = true
-    const { data } = await fetchEmployee(route.params.id)
+    loading.value = true;
+    const { data } = await fetchEmployee(route.params.id);
+
     form.value = {
       ...data,
       birth_date: data.birth_date.split('T')[0],
       passport: {
         ...data.passport,
-        issue_date: data.passport.issue_date.split('T')[0]
-      }
-    }
+        issue_date: data.passport.issue_date.split('T')[0],
+      },
+      files: (data.files || []).map(file => ({
+        id: file.id,
+        name: file.name,
+        isServerFile: true
+      }))
+    };
   } catch (err) {
-    error.value = err.response?.data?.error || err.message
+    error.value = err.response?.data?.error || err.message;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 </script>
 
 <template>
@@ -155,7 +184,10 @@ onMounted(async () => {
           <div v-if="form.files.length" class="files-list">
             <div v-for="(file, index) in form.files" :key="index" class="file-item">
               <span>{{ file.name }}</span>
-              <AppButton type="button" @click="removeFile(index)">×</AppButton>
+              <div>
+                <AppButton v-if="file.isServerFile" type="button" @click="downloadFile(file)">Скачать</AppButton>
+                <AppButton type="button" @click="removeFile(index)">×</AppButton>
+              </div>
             </div>
           </div>
         </fieldset>

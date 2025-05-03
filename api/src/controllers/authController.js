@@ -13,7 +13,12 @@ class AuthController {
         return res.status(401).json({ error: 'Invalid login or password' });
       }
       const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.json({ token });
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Lax',
+      });
+      res.json({ message: 'Login successful' });
     } catch (err) {
       res.status(500).json({ error: err.message });
     } finally {

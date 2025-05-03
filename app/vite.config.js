@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      host: true,
       proxy: {
         '/api': {
           target: process.env.VITE_API_TARGET,

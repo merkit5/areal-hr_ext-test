@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue';
+import { ref, provide, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { checkAuth, logout } from '@/services/auth';
 
@@ -7,12 +7,10 @@ const router = useRouter();
 const isAuthenticated = ref(false);
 
 const checkAuthentication = async () => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    const authStatus = await checkAuth();
-    isAuthenticated.value = authStatus.authenticated;
-  } else {
-    isAuthenticated.value = false;
+  const authStatus = await checkAuth();
+  isAuthenticated.value = authStatus.authenticated;
+  if (!authStatus.authenticated) {
+    router.push('/login');
   }
 };
 
@@ -21,7 +19,6 @@ onMounted(checkAuthentication);
 const handleLogout = async () => {
   await logout();
   isAuthenticated.value = false;
-  localStorage.removeItem('token');
   router.push('/login');
 };
 
@@ -30,7 +27,7 @@ provide('checkAuthentication', checkAuthentication);
 </script>
 
 <template>
-  <header>
+  <header v-if="isAuthenticated">
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/organizations">Organizations</RouterLink>
@@ -40,9 +37,8 @@ provide('checkAuthentication', checkAuthentication);
       <RouterLink to="/hr-operations">Hr operations</RouterLink>
       <RouterLink to="/users">Users</RouterLink>
       <RouterLink to="/changeHistory">ChangeHistory</RouterLink>
-      <RouterLink v-if="isAuthenticated" to="/profile">Profile</RouterLink>
-      <RouterLink v-if="!isAuthenticated" to="/login">Login</RouterLink>
-      <button v-if="isAuthenticated" @click="handleLogout">Log out</button>
+      <RouterLink to="/profile">Profile</RouterLink>
+      <button @click="handleLogout">Log out</button>
     </nav>
   </header>
 

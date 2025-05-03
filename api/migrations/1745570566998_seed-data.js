@@ -1,4 +1,5 @@
 const argon2 = require('argon2');
+require('dotenv').config({ path: '../.env' });
 
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
@@ -10,6 +11,7 @@ exports.shorthands = undefined;
  * @returns {Promise<void>}
  */
 exports.up = async (pgm) => {
+
   await pgm.sql(`
     INSERT INTO organization (name, comment) VALUES
     ('Organization 1', 'Comment 1'),
@@ -48,19 +50,26 @@ exports.up = async (pgm) => {
     ('Region 2', 'Locality 2', 'Street 2', '2', '2', '20', 2);
   `);
 
-  const adminPassword = await argon2.hash('admin');
-  const hrPassword = await argon2.hash('manager');
+  const adminLogin = process.env.ADMIN_LOGIN || 'admin';
+  const managerLogin = process.env.MANAGER_LOGIN || 'manager';
+
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const managerPassword = process.env.MANAGER_PASSWORD || 'manager123';
+
+  const hashedAdminPassword = await argon2.hash(adminPassword);
+  const hashedManagerPassword = await argon2.hash(managerPassword);
+
 
   await pgm.sql(`
     INSERT INTO "user" (first_name, last_name, patronymic, login, password, role) VALUES
-    ('Admin', 'User', 'Adminovich', 'admin', '${adminPassword}', 'admin'),
-    ('HR', 'User', 'HRovich', 'manager', '${hrPassword}', 'manager');
+    ('Admin', 'User', 'Adminovich', '${adminLogin}', '${hashedAdminPassword}', 'admin'),
+    ('Manager', 'User', 'Managerovich', '${managerLogin}', '${hashedManagerPassword}', 'manager');
   `);
 
   await pgm.sql(`
     INSERT INTO hr_operations (operation_type, salary, date, employee_id, department_id, position_id) VALUES
-    ('Hire', 50000.00, '2025-04-24', 1, 1, 1),
-    ('Promotion', 60000.00, '2025-04-24', 2, 2, 2);
+    ('hire', 50000.00, '2025-04-24', 1, 1, 1),
+    ('promote', 60000.00, '2025-04-24', 2, 2, 2);
   `);
 };
 

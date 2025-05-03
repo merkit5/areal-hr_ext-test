@@ -6,6 +6,12 @@ class ChangeHistoryController {
     const client = await pool.connect();
     try {
       const history = await ChangeHistory.getAll(client);
+
+      for (const record of history) {
+        const userData = await ChangeHistory.getUserData(client, record.user_id);
+        record.user = userData;
+      }
+
       res.json(history);
     } catch (err) {
       res.status(500).json({ error: err.message });

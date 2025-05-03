@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-const authHeaders = {
-    headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-    }
+const authConfig = {
+    withCredentials: true
 };
 
 export const fetchAllChangeHistory = () => {
-    return axios.get('/api/changeHistory', authHeaders);
+    return axios.get('/api/changeHistory', authConfig);
 };

@@ -37,6 +37,7 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login,
+        meta: { requiresAuth: false }
     },
     {
         path: '/organizations',
@@ -165,12 +166,23 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem('token');
-    if (to.meta.requiresAuth && !token) {
+router.beforeEach(async (to, from, next) => {
+    if (to.meta.requiresAuth === false) {
+        return next();
+    }
+
+    try {
+        const response = await fetch('/api/auth/check', {
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            next();
+        } else {
+            next('/login');
+        }
+    } catch (error) {
         next('/login');
-    } else {
-        next();
     }
 });
 

@@ -30,6 +30,14 @@ const positions = ref([])
 const error = ref(null)
 const isLoading = ref(false)
 
+const operationTypes = ref([
+  { value: 'hire', label: 'Прием на работу' },
+  { value: 'fire', label: 'Увольнение' },
+  { value: 'promote', label: 'Повышение' },
+  { value: 'demote', label: 'Понижение' },
+  { value: 'transfer', label: 'Перевод' }
+])
+
 onMounted(async () => {
   isLoading.value = true
   try {
@@ -79,41 +87,46 @@ const submitForm = async () => {
 
 <template>
   <div>
-    <h1>{{ isEditMode ? 'Edit' : 'Create' }} HR Operation</h1>
+    <h1>{{ isEditMode ? 'Редактирование' : 'Создание' }} кадровой операции</h1>
 
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading">Загрузка...</div>
     <div v-else>
       <div v-if="error" class="error">{{ error }}</div>
 
       <form @submit.prevent="submitForm" class="operation-form">
-        <AppInput label="Operation Type" v-model="form.operation_type" required />
-        <AppInput label="Salary" type="number" v-model.number="form.salary" required />
-        <AppInput label="Date" type="date" v-model="form.date" required />
+        <AppSelect
+          label="Тип операции"
+          v-model="form.operation_type"
+          :options="operationTypes"
+          required
+        />
+        <AppInput label="Зарплата" type="number" v-model.number="form.salary" required />
+        <AppInput label="Дата" type="date" v-model="form.date" required />
 
         <AppSelect
-            label="Employee ID"
-            v-model="form.employee_id"
-            :options="employees.map(emp => ({ value: emp.id, label: `${emp.last_name} ${emp.first_name} (ID: ${emp.id})` }))"
-            required
+          label="Сотрудник"
+          v-model="form.employee_id"
+          :options="employees.map(emp => ({ value: emp.id, label: `${emp.last_name} ${emp.first_name}` }))"
+          required
         />
 
         <AppSelect
-            label="Department ID"
-            v-model="form.department_id"
-            :options="departments.map(dept => ({ value: dept.id, label: `${dept.name} (ID: ${dept.id})` }))"
-            required
+          label="Отдел"
+          v-model="form.department_id"
+          :options="departments.map(dept => ({ value: dept.id, label: `${dept.name}` }))"
+          required
         />
 
         <AppSelect
-            label="Position ID"
-            v-model="form.position_id"
-            :options="positions.map(pos => ({ value: pos.id, label: `${pos.title} (ID: ${pos.id})` }))"
-            required
+          label="Должность"
+          v-model="form.position_id"
+          :options="positions.map(pos => ({ value: pos.id, label: `${pos.name}` }))"
+          required
         />
 
         <div class="form-actions">
-          <AppButton type="button" @click="router.push('/hr-operations')">Cancel</AppButton>
-          <AppButton type="submit">{{ isEditMode ? 'Update' : 'Create' }}</AppButton>
+          <AppButton type="button" @click="router.push('/hr-operations')">Отмена</AppButton>
+          <AppButton type="submit">{{ isEditMode ? 'Обновить' : 'Создать' }}</AppButton>
         </div>
       </form>
     </div>
