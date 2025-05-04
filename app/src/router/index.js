@@ -2,16 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 
 import OrganizationList from '../components/organization/OrganizationList.vue';
-import OrganizationCreate from '../components/organization/OrganizationCreate.vue';
-import OrganizationEdit from '../components/organization/OrganizationEdit.vue';
+import OrganizationForm from '../components/organization/OrganizationForm.vue';
 
 import DepartmentList from '../components/department/DepartmentList.vue';
-import DepartmentCreate from '../components/department/DepartmentCreate.vue';
-import DepartmentEdit from '../components/department/DepartmentEdit.vue';
+import DepartmentForm from '../components/department/DepartmentForm.vue';
 
 import PositionList from '../components/position/PositionList.vue';
-import PositionCreate from '../components/position/PositionCreate.vue';
-import PositionEdit from '../components/position/PositionEdit.vue';
+import PositionForm from '../components/position/PositionForm.vue';
 
 import EmployeeList from '../components/employee/EmployeeList.vue';
 import EmployeeForm from '../components/employee/EmployeeForm.vue';
@@ -48,13 +45,13 @@ const routes = [
     {
         path: '/organizations/new',
         name: 'create-organization',
-        component: OrganizationCreate,
+        component: OrganizationForm,
         meta: { requiresAuth: true },
     },
     {
         path: '/organizations/edit/:id',
         name: 'edit-organization',
-        component: OrganizationEdit,
+        component: OrganizationForm,
         meta: { requiresAuth: true },
     },
     {
@@ -66,13 +63,13 @@ const routes = [
     {
         path: '/departments/new',
         name: 'create-department',
-        component: DepartmentCreate,
+        component: DepartmentForm,
         meta: { requiresAuth: true },
     },
     {
         path: '/departments/edit/:id',
         name: 'edit-department',
-        component: DepartmentEdit,
+        component: DepartmentForm,
         meta: { requiresAuth: true },
     },
     {
@@ -84,13 +81,13 @@ const routes = [
     {
         path: '/positions/new',
         name: 'create-position',
-        component: PositionCreate,
+        component: PositionForm,
         meta: { requiresAuth: true },
     },
     {
         path: '/positions/edit/:id',
         name: 'edit-position',
-        component: PositionEdit,
+        component: PositionForm,
         meta: { requiresAuth: true },
     },
     {

@@ -104,8 +104,7 @@ const downloadFile = async (file) => {
     a.click();
     window.URL.revokeObjectURL(url);
   } catch (err) {
-    console.error('Download error:', err);
-    alert('Ошибка при скачивании файла.');
+    alert('Download error');
   }
 };
 
