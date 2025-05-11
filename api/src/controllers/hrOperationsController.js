@@ -70,6 +70,19 @@ class HROperationsController {
       client.release();
     }
   }
+
+  static async getEmployeeHistory(req, res) {
+    const client = await pool.connect();
+    try {
+      const employeeId = parseInt(req.params.employeeId);
+      const history = await HROperations.getEmployeeHistory(client, employeeId);
+      res.json(history);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
+    }
+  }
 }
 
 module.exports = HROperationsController;

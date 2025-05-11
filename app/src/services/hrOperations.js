@@ -35,3 +35,7 @@ export const fetchDepartments = () => {
 export const fetchPositions = () => {
     return axios.get('/api/positions', authConfig);
 };
+
+export const fetchEmployeeHistory = (employeeId) => {
+    return axios.get(`/api/hr-operations/employee/${employeeId}/history`, authConfig);
+};

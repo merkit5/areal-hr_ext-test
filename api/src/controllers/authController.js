@@ -38,7 +38,13 @@ class AuthController {
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-      res.json({ authenticated: true, user });
+      res.json({
+        authenticated: true,
+        user: {
+          name: user.first_name + ' ' + user.last_name,
+        },
+      });
+
     } catch (err) {
       res.status(500).json({ error: err.message });
     } finally {

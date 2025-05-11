@@ -72,6 +72,11 @@ class HROperations {
     const { rows } = await client.query('SELECT * FROM hr_operations WHERE id = $1', [id]);
     return rows[0];
   }
+
+  static async getEmployeeHistory(client, employeeId) {
+    const { rows } = await client.query(`SELECT * FROM hr_operations WHERE employee_id = $1 ORDER BY date DESC`, [employeeId]);
+    return rows;
+  }
 }
 
 module.exports = HROperations;

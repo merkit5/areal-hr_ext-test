@@ -1,18 +1,23 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchAllHROperations, deleteHROperation } from "@/services/hrOperations.js";
+import { fetchAllHROperations, deleteHROperation, fetchEmployees } from "@/services/hrOperations.js";
 import AppButton from '@/components/UI/AppButton.vue'
 
 const router = useRouter()
 const operations = ref([])
+const employees = ref([])
 const loading = ref(false)
 
 const loadOperations = async () => {
   loading.value = true
   try {
-    const { data } = await fetchAllHROperations()
-    operations.value = data
+    const [opsResponse, employeesResponse] = await Promise.all([
+      fetchAllHROperations(),
+      fetchEmployees()
+    ])
+    operations.value = opsResponse.data
+    employees.value = employeesResponse.data
   } catch (error) {
     alert('Failed to load HR operations')
   } finally {
@@ -30,6 +35,12 @@ const removeOperation = async (id) => {
     alert('Failed to delete operation')
   }
 }
+
+const getEmployeeName = (employeeId) => {
+  const employee = employees.value.find(e => e.id === employeeId)
+  return `${employee.last_name} ${employee.first_name}`
+}
+
 
 onMounted(loadOperations)
 </script>
@@ -58,7 +69,7 @@ onMounted(loadOperations)
         <td>{{ op.operation_type }}</td>
         <td>{{ new Date(op.date).toLocaleDateString() }}</td>
         <td>{{ op.salary }}</td>
-        <td>{{ op.employee_id }}</td>
+        <td>{{ getEmployeeName(op.employee_id) }}</td>
         <td>
           <AppButton @click="router.push(`/hr-operations/edit/${op.id}`)">Edit</AppButton>
           <AppButton @click="removeOperation(op.id)">Delete</AppButton>

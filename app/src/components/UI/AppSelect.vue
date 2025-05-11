@@ -1,6 +1,9 @@
 <template>
   <div class="form-group">
-    <label :for="id">{{ label }}</label>
+    <label :for="id">
+      {{ label }}
+      <span v-if="required" class="required">*</span>
+    </label>
     <select :id="id" v-model="modelValue" :required="required">
       <option v-for="option in options" :key="option.value" :value="option.value">
         {{ option.label }}
@@ -42,5 +45,9 @@ watch(modelValue, (newVal) => {
 .form-group select {
   width: 100%;
   padding: 0.5rem;
+}
+
+.required {
+  color: red;
 }
 </style>

@@ -6,7 +6,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=${NODE_ENV}
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=${DB_USER}
@@ -23,10 +22,7 @@ services:
       context: ./app
       dockerfile: ../containers/app/Dockerfile
     ports:
-      - "5173:5173"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - VITE_API_TARGET=http://api:3000
+      - "80:80"
     depends_on:
       - api
 

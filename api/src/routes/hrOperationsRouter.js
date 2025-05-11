@@ -9,6 +9,7 @@ const authenticate = require('../middleware/authenticate');
 
 router.get('/', authenticate, hrOperationsController.getAll);
 router.get('/:id', authenticate, hrOperationsController.getById);
+router.get('/employee/:employeeId/history', authenticate, hrOperationsController.getEmployeeHistory);
 router.post('/', authenticate, validateCreateHrOperation, hrOperationsController.create);
 router.put('/:id', authenticate, validateUpdateHrOperation, hrOperationsController.update);
 router.delete('/:id', authenticate, hrOperationsController.delete);

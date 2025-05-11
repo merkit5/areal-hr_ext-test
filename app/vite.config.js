@@ -12,14 +12,9 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
-    server: {
-      host: true,
-      proxy: {
-        '/api': {
-          target: process.env.VITE_API_TARGET,
-          changeOrigin: true,
-        },
-      },
+    build: {
+      outDir: '../dist',
+      emptyOutDir: true,
     },
   };
 });

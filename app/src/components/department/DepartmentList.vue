@@ -1,18 +1,23 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchAllDepartments, deleteDepartment } from "@/services/department.js";
+import { fetchAllDepartments, deleteDepartment, fetchOrganizations } from "@/services/department.js";
 import AppButton from '@/components/UI/AppButton.vue'
 
 const router = useRouter()
 const departments = ref([])
+const organizations = ref([])
 const loading = ref(false)
 
 const load = async () => {
   loading.value = true
   try {
-    const { data } = await fetchAllDepartments()
-    departments.value = data
+    const [deptsResponse, orgsResponse] = await Promise.all([
+      fetchAllDepartments(),
+      fetchOrganizations()
+    ])
+    departments.value = deptsResponse.data
+    organizations.value = orgsResponse.data
   } catch (error) {
     alert('Failed to load departments')
   } finally {
@@ -31,6 +36,18 @@ const remove = async (id) => {
     console.error('Delete error:', error)
   }
 }
+
+const getOrganizationName = (orgId) => {
+  const org = organizations.value.find(o => o.id === orgId)
+  return org.name
+}
+
+const getDepartmentName = (deptId) => {
+  const dept = departments.value.find(d => d.id === deptId)
+  return dept.name
+}
+
+
 
 onMounted(load)
 </script>
@@ -58,8 +75,8 @@ onMounted(load)
         <td>{{ dept.id }}</td>
         <td>{{ dept.name }}</td>
         <td>{{ dept.comment || '-' }}</td>
-        <td>{{ dept.organization_id }}</td>
-        <td>{{ dept.parent_id || '-' }}</td>
+        <td>{{ getOrganizationName(dept.organization_id) }}</td>
+        <td>{{ dept.parent_id ? getDepartmentName(dept.parent_id) : '-' }}</td>
         <td>
           <AppButton @click="router.push(`/departments/edit/${dept.id}`)">Edit</AppButton>
           <AppButton @click="remove(dept.id)">Delete</AppButton>
