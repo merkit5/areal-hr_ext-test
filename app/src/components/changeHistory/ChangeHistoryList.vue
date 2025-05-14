@@ -25,20 +25,22 @@ const getChanges = (oldData, newData) => {
 
   if (!oldData) {
     for (const key in newData) {
-      if (!ignoredFields.includes(key)) {
+      if (!ignoredFields.includes(key) && newData[key] !== null && newData[key] !== undefined) {
         changes[key] = { old: null, new: newData[key] };
       }
     }
   } else if (!newData) {
     for (const key in oldData) {
-      if (!ignoredFields.includes(key)) {
+      if (!ignoredFields.includes(key) && oldData[key] !== null && oldData[key] !== undefined) {
         changes[key] = { old: oldData[key], new: null };
       }
     }
   } else {
     for (const key in oldData) {
-      if (!ignoredFields.includes(key) && oldData[key] !== newData[key]) {
-        changes[key] = { old: oldData[key], new: newData[key] };
+      if (!ignoredFields.includes(key) && JSON.stringify(oldData[key]) !== JSON.stringify(newData[key])) {
+        if (oldData[key] !== null || newData[key] !== null) {
+          changes[key] = { old: oldData[key], new: newData[key] };
+        }
       }
     }
   }
@@ -57,18 +59,22 @@ const getActionDescription = (oldData, newData) => {
 };
 
 const formattedChangeHistory = computed(() => {
-  return changeHistory.value.map(history => {
-    const changes = getChanges(history.changes.old, history.changes.new);
-    const actionDescription = getActionDescription(history.changes.old, history.changes.new);
-    return {
-      ...history,
-      changes,
-      actionDescription,
-      objectDisplay: history.objectName
-        ? `${history.objectName} (ID: ${history.object_id})`
-        : `ID: ${history.object_id}`
-    };
-  });
+  return changeHistory.value
+    .map(history => {
+      const changes = getChanges(history.changes.old, history.changes.new);
+      const actionDescription = getActionDescription(history.changes.old, history.changes.new);
+
+      return {
+        ...history,
+        changes,
+        actionDescription,
+        objectDisplay: history.objectName
+          ? `${history.objectName} (ID: ${history.object_id})`
+          : `ID: ${history.object_id}`,
+        hasChanges: Object.keys(changes).length > 0 // Добавляем флаг наличия изменений
+      };
+    })
+    .filter(history => history.hasChanges); // Фильтруем записи без изменений
 });
 
 onMounted(load);
@@ -78,8 +84,8 @@ onMounted(load);
   <div>
     <h1>Change History</h1>
 
-    <div v-if="loading"></div>
-    <div v-else-if="formattedChangeHistory.length === 0"></div>
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="formattedChangeHistory.length === 0">No changes found</div>
     <table v-else class="change-history-table">
       <thead>
       <tr>
@@ -98,7 +104,7 @@ onMounted(load);
         <td>{{ history.object_type }}</td>
         <td>{{ history.objectDisplay }}</td>
         <td>
-          <ul>
+          <ul v-if="Object.keys(history.changes).length > 0">
             <li v-for="(change, key) in history.changes" :key="key">
               <strong>{{ key }}:</strong>
               <template v-if="history.actionDescription === 'Created'">
@@ -112,6 +118,7 @@ onMounted(load);
               </template>
             </li>
           </ul>
+          <span v-else>No changes detected</span>
         </td>
         <td>{{ history.user ? `${history.user.last_name} ${history.user.first_name} ${history.user.patronymic}` : 'Unknown' }}</td>
       </tr>

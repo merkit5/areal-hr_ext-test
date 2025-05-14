@@ -30,19 +30,22 @@ class Passport {
     userId
   ) {
     const oldData = await this.getById(client, employee_id);
+
     const { rows } = await client.query(
       `UPDATE passport SET series = $1, number = $2, issue_date = $3, issuer_code = $4, issuer = $5, updated_at = current_timestamp WHERE employee_id = $6 RETURNING *`,
       [series, number, issue_date, issuer_code, issuer, employee_id]
     );
     const newData = rows[0];
 
-    await ChangeHistory.logAction(client, {
-      object_type: 'passport',
-      object_id: newData.id,
-      old_data: oldData,
-      new_data: newData,
-      user_id: userId,
-    });
+    if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+      await ChangeHistory.logAction(client, {
+        object_type: 'passport',
+        object_id: newData.id,
+        old_data: oldData,
+        new_data: newData,
+        user_id: userId,
+      });
+    }
 
     return newData;
   }

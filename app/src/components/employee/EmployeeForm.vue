@@ -34,6 +34,58 @@ const form = ref({
   files: []
 })
 
+const validateForm = () => {
+  if (!form.value.first_name.trim()) {
+    error.value = 'First Name is required'
+    return false
+  }
+  if (!form.value.last_name.trim()) {
+    error.value = 'Last Name is required'
+    return false
+  }
+  if (!form.value.birth_date) {
+    error.value = 'Date of Birth is required'
+    return false
+  }
+  if (!form.value.passport.series.trim()) {
+    error.value = 'Passport Series is required'
+    return false
+  }
+  if (!form.value.passport.number.trim()) {
+    error.value = 'Passport Number is required'
+    return false
+  }
+  if (!form.value.passport.issue_date) {
+    error.value = 'Passport Issue Date is required'
+    return false
+  }
+  if (!form.value.passport.issuer_code.trim()) {
+    error.value = 'Passport Issuer Code is required'
+    return false
+  }
+  if (!form.value.passport.issuer.trim()) {
+    error.value = 'Passport Issuer is required'
+    return false
+  }
+  if (!form.value.address.region.trim()) {
+    error.value = 'Region is required'
+    return false
+  }
+  if (!form.value.address.locality.trim()) {
+    error.value = 'Locality is required'
+    return false
+  }
+  if (!form.value.address.street.trim()) {
+    error.value = 'Street is required'
+    return false
+  }
+  if (!form.value.address.house.trim()) {
+    error.value = 'House is required'
+    return false
+  }
+  return true
+}
+
 const handleFileUpload = (event) => {
   const files = event.target.files
   for (let i = 0; i < files.length; i++) {
@@ -50,6 +102,10 @@ const removeFile = (index) => {
 
 const submitForm = async () => {
   error.value = null
+  if (!validateForm()) {
+    return
+  }
+
   loading.value = true
 
   try {
@@ -63,6 +119,7 @@ const submitForm = async () => {
       passport: { ...form.value.passport },
       address: { ...form.value.address }
     }
+
 
     formData.append('data', JSON.stringify(jsonPayload))
 
@@ -105,6 +162,19 @@ const downloadFile = async (file) => {
     window.URL.revokeObjectURL(url);
   } catch (err) {
     alert('Download error');
+  }
+};
+
+const deleteFile = async (file) => {
+  if (!confirm('Are you sure you want to delete this file?')) return;
+  try {
+    await fetch(`/api/employees/${route.params.id}/files/${file.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    form.value.files = form.value.files.filter(f => f.id !== file.id);
+  } catch (err) {
+    alert('Failed to delete file');
   }
 };
 
@@ -185,7 +255,7 @@ onMounted(async () => {
               <span>{{ file.name }}</span>
               <div>
                 <AppButton v-if="file.isServerFile" type="button" @click="downloadFile(file)">Скачать</AppButton>
-                <AppButton type="button" @click="removeFile(index)">×</AppButton>
+                <AppButton type="button" @click="deleteFile(file)">Удалить</AppButton>
               </div>
             </div>
           </div>

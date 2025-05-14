@@ -1,23 +1,29 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchAllHROperations, deleteHROperation, fetchEmployees } from "@/services/hrOperations.js";
+import { fetchAllHROperations, deleteHROperation, fetchEmployees, fetchDepartments, fetchPositions } from "@/services/hrOperations.js";
 import AppButton from '@/components/UI/AppButton.vue'
 
 const router = useRouter()
 const operations = ref([])
 const employees = ref([])
+const departments = ref([])
+const positions = ref([])
 const loading = ref(false)
 
 const loadOperations = async () => {
   loading.value = true
   try {
-    const [opsResponse, employeesResponse] = await Promise.all([
+    const [opsResponse, employeesResponse, departmentsResponse, positionsResponse] = await Promise.all([
       fetchAllHROperations(),
-      fetchEmployees()
+      fetchEmployees(),
+      fetchDepartments(),
+      fetchPositions()
     ])
     operations.value = opsResponse.data
     employees.value = employeesResponse.data
+    departments.value = departmentsResponse.data
+    positions.value = positionsResponse.data
   } catch (error) {
     alert('Failed to load HR operations')
   } finally {
@@ -41,6 +47,15 @@ const getEmployeeName = (employeeId) => {
   return `${employee.last_name} ${employee.first_name}`
 }
 
+const getDepartmentName = (departmentId) => {
+  const department = departments.value.find(d => d.id === departmentId)
+  return department ? department.name : 'N/A'
+}
+
+const getPositionName = (positionId) => {
+  const position = positions.value.find(p => p.id === positionId)
+  return position ? position.name : 'N/A'
+}
 
 onMounted(loadOperations)
 </script>
@@ -59,7 +74,9 @@ onMounted(loadOperations)
         <th>Type</th>
         <th>Date</th>
         <th>Salary</th>
-        <th>Employee ID</th>
+        <th>Employee</th>
+        <th>Department</th>
+        <th>Position</th>
         <th>Actions</th>
       </tr>
       </thead>
@@ -70,6 +87,8 @@ onMounted(loadOperations)
         <td>{{ new Date(op.date).toLocaleDateString() }}</td>
         <td>{{ op.salary }}</td>
         <td>{{ getEmployeeName(op.employee_id) }}</td>
+        <td>{{ getDepartmentName(op.department_id) }}</td>
+        <td>{{ getPositionName(op.position_id) }}</td>
         <td>
           <AppButton @click="router.push(`/hr-operations/edit/${op.id}`)">Edit</AppButton>
           <AppButton @click="removeOperation(op.id)">Delete</AppButton>

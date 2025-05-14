@@ -15,7 +15,6 @@ exports.up = (pgm) => {
     'transfer'
   ]);
 
-  // Создаем таблицу hr_operations
   pgm.createTable('hr_operations', {
     id: {
       type: 'serial',
@@ -27,7 +26,6 @@ exports.up = (pgm) => {
     },
     salary: {
       type: 'decimal(8,2)',
-      notNull: true,
     },
     date: {
       type: 'timestamp',

@@ -28,8 +28,20 @@ onMounted(async () => {
   }
 })
 
+const validateForm = () => {
+  if (!form.value.name.trim()) {
+    error.value = 'Position Name is required'
+    return false
+  }
+  return true
+}
+
 const submitForm = async () => {
   error.value = null
+  if (!validateForm()) {
+    return
+  }
+
   try {
     if (isEditMode) {
       await updatePosition(route.params.id, form.value)

@@ -5,9 +5,27 @@ const ChangeHistory = require('./change_history');
 
 class Employee {
   static async getAll(client) {
-    const { rows } = await client.query('SELECT * FROM employee WHERE deleted_at IS NULL');
-    return rows;
+    const { rows: employees } = await client.query('SELECT * FROM employee WHERE deleted_at IS NULL');
+    const result = [];
+
+    for (const employee of employees) {
+      const { id } = employee;
+
+      const { rows: passports } = await client.query('SELECT * FROM passport WHERE employee_id = $1', [id]);
+      const { rows: addresses } = await client.query('SELECT * FROM address WHERE employee_id = $1', [id]);
+      const { rows: files } = await client.query('SELECT * FROM file WHERE employee_id = $1', [id]);
+
+      result.push({
+        ...employee,
+        passport: passports[0] || null,
+        address: addresses[0] || null,
+        files,
+      });
+    }
+
+    return result;
   }
+
 
   static async getByIdFull(client, id) {
     const { rows: employees } = await client.query(
@@ -89,12 +107,14 @@ class Employee {
     );
 
     const newData = await this.getByIdFull(client, id);
+
     await ChangeHistory.logAction(client, {
       object_type: 'employee',
       object_id: id,
       old_data: oldData,
       new_data: newData,
       user_id: userId,
+      ignoreFields: ['passport', 'address', 'files'] // Игнорируем эти поля
     });
 
     if (passport) {
@@ -107,7 +127,6 @@ class Employee {
 
     if (files) {
       await client.query('DELETE FROM file WHERE employee_id = $1', [id]);
-
       for (const file of files) {
         await File.create(client, { ...file, employee_id: id }, userId);
       }

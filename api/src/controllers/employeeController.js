@@ -2,6 +2,7 @@ const pool = require('../config/db');
 const Employee = require('../models/employee');
 const path = require('path');
 const fs = require('fs/promises');
+const iconv = require('iconv-lite');
 
 class EmployeeController {
   static async getAll(req, res) {
@@ -35,7 +36,7 @@ class EmployeeController {
       await client.query('BEGIN');
       const parsedData = JSON.parse(req.body.data);
       const files = req.files.map((file) => ({
-        name: file.originalname,
+        name: iconv.decode(Buffer.from(file.originalname, 'binary'), 'utf8'),
         path: file.path,
       }));
       parsedData.files = files;
@@ -56,7 +57,7 @@ class EmployeeController {
       await client.query('BEGIN');
       const parsedData = JSON.parse(req.body.data);
       const files = req.files.map((file) => ({
-        name: file.originalname,
+        name: iconv.decode(Buffer.from(file.originalname, 'binary'), 'utf8'),
         path: file.path,
       }));
       parsedData.files = files;
@@ -105,6 +106,39 @@ class EmployeeController {
       } catch {
         res.status(404).json({ error: 'Файл отсутствует на сервере' });
       }
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
+    }
+  }
+
+  static async deleteFile(req, res) {
+    const client = await pool.connect();
+    try {
+      const { id: employeeId, fileId } = req.params;
+
+      const { rows } = await client.query(
+        'SELECT * FROM file WHERE id = $1 AND employee_id = $2',
+        [fileId, employeeId]
+      );
+      const file = rows[0];
+      if (!file) return res.status(404).json({ error: 'File not found' });
+
+      const absolutePath = path.resolve(file.path);
+      try {
+        await fs.unlink(absolutePath);
+      } catch (err) {
+        console.error(`Failed to delete file: ${absolutePath}`, err);
+        return res.status(500).json({ error: 'Failed to delete file from disk' });
+      }
+
+      await client.query(
+        'DELETE FROM file WHERE id = $1 AND employee_id = $2',
+        [fileId, employeeId]
+      );
+
+      res.json({ message: 'File deleted' });
     } catch (err) {
       res.status(500).json({ error: err.message });
     } finally {

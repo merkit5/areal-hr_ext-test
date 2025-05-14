@@ -36,6 +36,30 @@ const roles = computed(() => {
   return allRoles;
 });
 
+const validateForm = () => {
+  if (!form.value.first_name.trim()) {
+    error.value = 'First Name is required';
+    return false;
+  }
+  if (!form.value.last_name.trim()) {
+    error.value = 'Last Name is required';
+    return false;
+  }
+  if (!form.value.login.trim()) {
+    error.value = 'Login is required';
+    return false;
+  }
+  if (!isEditMode && !form.value.password.trim()) {
+    error.value = 'Password is required for a new user';
+    return false;
+  }
+  if (!form.value.role) {
+    error.value = 'Role is required';
+    return false;
+  }
+  return true;
+};
+
 onMounted(async () => {
   const auth = await checkAuth();
   currentUserRole.value = auth.user?.role || '';
@@ -66,6 +90,10 @@ const loadUserData = async () => {
 
 const submitForm = async () => {
   error.value = null;
+  if (!validateForm()) {
+    return;
+  }
+
   try {
     const payload = {
       first_name: form.value.first_name,

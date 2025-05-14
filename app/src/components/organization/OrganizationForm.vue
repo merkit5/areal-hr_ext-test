@@ -36,8 +36,20 @@ const loadOrganizationData = async () => {
   }
 };
 
+const validateForm = () => {
+  if (!form.value.name.trim()) {
+    error.value = 'Name is required';
+    return false;
+  }
+  return true;
+};
+
 const submitForm = async () => {
   error.value = null;
+  if (!validateForm()) {
+    return;
+  }
+
   try {
     if (isEditMode) {
       await updateOrganization(route.params.id, form.value);

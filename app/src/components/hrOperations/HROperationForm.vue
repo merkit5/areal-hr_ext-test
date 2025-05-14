@@ -32,7 +32,6 @@ const employeeHistory = ref([])
 const error = ref(null)
 const isLoading = ref(false)
 
-// Доступные типы операций
 const operationTypes = ref([
   { value: 'hire', label: 'Прием на работу' },
   { value: 'fire', label: 'Увольнение' },
@@ -41,33 +40,35 @@ const operationTypes = ref([
   { value: 'transfer', label: 'Перевод' }
 ])
 
+const isEmployeeSelected = computed(() => !!form.value.employee_id)
+
 const availableOperations = computed(() => {
-  if (!form.value.employee_id) return operationTypes.value
+  if (!isEmployeeSelected.value) return []
 
   const lastOperation = employeeHistory.value[0]?.operation_type
   const currentEmployee = employees.value.find(e => e.id === form.value.employee_id)
 
-  if (!currentEmployee) return operationTypes.value
-
-  const operations = [...operationTypes.value]
+  if (!currentEmployee) return []
 
   if (!lastOperation || lastOperation === 'fire') {
-    return operations.filter(op => op.value === 'hire')
+    return operationTypes.value.filter(op => op.value === 'hire')
   }
 
   if (lastOperation === 'hire') {
-    return operations.filter(op => ['fire', 'promote', 'demote', 'transfer'].includes(op.value))
+    return operationTypes.value.filter(op => ['fire', 'promote', 'demote', 'transfer'].includes(op.value))
   }
 
-  return operations.filter(op => op.value !== 'hire')
+  return operationTypes.value.filter(op => op.value !== 'hire')
 })
 
 const visibleFields = computed(() => {
   const fields = {
     employee_id: true,
     date: true,
-    operation_type: true
+    operation_type: isEmployeeSelected.value
   }
+
+  if (!isEmployeeSelected.value) return fields
 
   switch(form.value.operation_type) {
     case 'hire':
@@ -137,7 +138,15 @@ watch(() => form.value.employee_id, async (newVal) => {
     if (lastOperation) {
       form.value.department_id = lastOperation.department_id
       form.value.position_id = lastOperation.position_id
+      if (availableOperations.value.length > 0) {
+        form.value.operation_type = availableOperations.value[0].value
+      }
     }
+  } else {
+    form.value.operation_type = 'hire'
+    form.value.department_id = ''
+    form.value.position_id = ''
+    form.value.salary = ''
   }
 })
 
@@ -173,22 +182,6 @@ const submitForm = async () => {
 
       <form @submit.prevent="submitForm" class="operation-form">
         <AppSelect
-          label="Тип операции"
-          v-model="form.operation_type"
-          :options="availableOperations"
-          required
-        />
-
-        <AppInput
-          v-if="visibleFields.date"
-          label="Дата"
-          type="date"
-          v-model="form.date"
-          required
-        />
-
-        <AppSelect
-          v-if="visibleFields.employee_id"
           label="Сотрудник"
           v-model="form.employee_id"
           :options="employees.map(emp => ({
@@ -198,12 +191,29 @@ const submitForm = async () => {
           required
         />
 
+        <AppSelect
+          label="Тип операции"
+          v-model="form.operation_type"
+          :options="availableOperations"
+          :disabled="!isEmployeeSelected"
+          required
+        />
+
+        <AppInput
+          label="Дата"
+          type="date"
+          v-model="form.date"
+          :disabled="!isEmployeeSelected"
+          required
+        />
+
         <AppInput
           v-if="visibleFields.salary"
           label="Зарплата"
           type="number"
           v-model.number="form.salary"
-          :required="visibleFields.salary"
+          :disabled="!isEmployeeSelected"
+          required
         />
 
         <AppSelect
@@ -214,7 +224,8 @@ const submitForm = async () => {
             value: dept.id,
             label: dept.name
           }))"
-          :required="visibleFields.department_id"
+          :disabled="!isEmployeeSelected"
+          required
         />
 
         <AppSelect
@@ -225,14 +236,18 @@ const submitForm = async () => {
             value: pos.id,
             label: pos.name
           }))"
-          :required="visibleFields.position_id"
+          :disabled="!isEmployeeSelected"
+          required
         />
 
         <div class="form-actions">
           <AppButton type="button" @click="router.push('/hr-operations')">
             Отмена
           </AppButton>
-          <AppButton type="submit">
+          <AppButton
+            type="submit"
+            :disabled="!isEmployeeSelected"
+          >
             {{ isEditMode ? 'Обновить' : 'Создать' }}
           </AppButton>
         </div>
@@ -257,5 +272,10 @@ const submitForm = async () => {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+:deep(.disabled) {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 </style>

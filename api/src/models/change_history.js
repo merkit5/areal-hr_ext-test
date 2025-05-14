@@ -1,9 +1,38 @@
 class ChangeHistory {
-  static async logAction(client, { object_type, object_id, old_data, new_data, user_id }) {
+  static async logAction(client, { object_type, object_id, old_data, new_data, user_id, ignoreFields = [] }) {
     const changes = {
-      old: old_data,
-      new: new_data,
+      old: {},
+      new: {}
     };
+
+    if (new_data === null) {
+      for (const key in old_data) {
+        if (!ignoreFields.includes(key)) {
+          changes.old[key] = old_data[key];
+          changes.new[key] = null;
+        }
+      }
+    }
+    else if (old_data === null) {
+      for (const key in new_data) {
+        if (!ignoreFields.includes(key)) {
+          changes.old[key] = null;
+          changes.new[key] = new_data[key];
+        }
+      }
+    }
+    else {
+      for (const key in new_data) {
+        if (!ignoreFields.includes(key) && JSON.stringify(old_data[key]) !== JSON.stringify(new_data[key])) {
+          changes.old[key] = old_data[key];
+          changes.new[key] = new_data[key];
+        }
+      }
+    }
+
+    if (Object.keys(changes.old).length === 0 && Object.keys(changes.new).length === 0) {
+      return null;
+    }
 
     const { rows } = await client.query(
       `INSERT INTO change_history (date, object_type, object_id, changes, user_id)

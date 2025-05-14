@@ -30,19 +30,22 @@ class Address {
     userId
   ) {
     const oldData = await this.getById(client, employee_id);
+
     const { rows } = await client.query(
       'UPDATE address SET region = $1, locality = $2, street = $3, house = $4, building = $5, apartment= $6, updated_at = current_timestamp WHERE employee_id = $7 RETURNING *',
       [region, locality, street, house, building, apartment, employee_id]
     );
     const newData = rows[0];
 
-    await ChangeHistory.logAction(client, {
-      object_type: 'address',
-      object_id: newData.id,
-      old_data: oldData,
-      new_data: newData,
-      user_id: userId,
-    });
+    if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+      await ChangeHistory.logAction(client, {
+        object_type: 'address',
+        object_id: newData.id,
+        old_data: oldData,
+        new_data: newData,
+        user_id: userId,
+      });
+    }
 
     return newData;
   }

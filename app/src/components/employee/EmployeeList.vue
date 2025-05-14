@@ -21,6 +21,19 @@ const loadEmployees = async () => {
   }
 }
 
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('ru-RU')
+}
+
+const downloadFile = async (employeeId, fileId) => {
+  try {
+    window.open(`/api/employees/${employeeId}/files/${fileId}/download`, '_blank')
+  } catch (err) {
+    error.value = 'Error loading file'
+  }
+}
+
 const handleDelete = async (id) => {
   if (!confirm('Are you sure you want to delete this employee?')) return
   try {
@@ -47,16 +60,52 @@ onMounted(loadEmployees)
       <thead>
       <tr>
         <th>ID</th>
-        <th>Full Name</th>
-        <th>Date of Birth</th>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Patronymic</th>
+        <th>Birth Date</th>
+
+        <th>Passport</th>
+
+        <th>Address</th>
+
+        <th>Files</th>
         <th>Actions</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="emp in employees" :key="emp.id">
         <td>{{ emp.id }}</td>
-        <td>{{ emp.last_name }} {{ emp.first_name }} {{ emp.patronymic }}</td>
-        <td>{{ new Date(emp.birth_date).toLocaleDateString() }}</td>
+        <td>{{ emp.last_name }}</td>
+        <td>{{ emp.first_name }}</td>
+        <td>{{ emp.patronymic || '-' }}</td>
+        <td>{{ formatDate(emp.birth_date) }}</td>
+
+        <td>
+          {{ emp.passport?.series || '-' }} {{ emp.passport?.number || '-' }}<br>
+          Issued By: {{ emp.passport?.issuer || '-' }}<br>
+          Issue Date: {{ formatDate(emp.passport?.issue_date) || '-' }}
+        </td>
+
+        <td>
+          {{ emp.address?.region || '-' }}<br>
+          {{ emp.address?.locality || '-' }}<br>
+          {{ emp.address?.street || '-' }}<br>
+          House: {{ emp.address?.house || '-' }}<br>
+          Building: {{ emp.address?.building || '-' }}<br>
+          Apartment: {{ emp.address?.apartment || '-' }}
+        </td>
+
+
+        <td>
+          <template v-if="emp.files?.length">
+            <div v-for="file in emp.files" :key="file.id" class="file-item">
+              <a @click.prevent="downloadFile(emp.id, file.id)">{{ file.name }}</a>
+            </div>
+          </template>
+          <span v-else>-</span>
+        </td>
+
         <td>
           <AppButton @click="router.push(`/employees/edit/${emp.id}`)">Edit</AppButton>
           <AppButton @click="handleDelete(emp.id)">Delete</AppButton>
@@ -64,6 +113,7 @@ onMounted(loadEmployees)
       </tr>
       </tbody>
     </table>
+
   </div>
 </template>
 

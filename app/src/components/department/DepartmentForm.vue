@@ -54,8 +54,24 @@ const loadInitialData = async () => {
   }
 }
 
+const validateForm = () => {
+  if (!form.value.name.trim()) {
+    error.value = 'Name is required'
+    return false
+  }
+  if (!form.value.organization_id) {
+    error.value = 'Organization is required'
+    return false
+  }
+  return true
+}
+
 const submitForm = async () => {
   error.value = null
+  if (!validateForm()) {
+    return
+  }
+
   try {
     if (isEditMode) {
       await updateDepartment(route.params.id, form.value)
