@@ -14,7 +14,8 @@ const currentUserRole = ref('');
 onMounted(async () => {
   await loadUsers();
   const auth = await checkAuth();
-  currentUserRole.value = auth.user?.role || '';
+  console.log('Auth result:', auth);
+  currentUserRole.value = auth.user?.role?.toLowerCase() || '';
 });
 
 const loadUsers = async () => {
