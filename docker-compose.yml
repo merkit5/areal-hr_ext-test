@@ -42,5 +42,16 @@ services:
       timeout: 5s
       retries: 10
 
+  docs:
+    build:
+      context: .
+      dockerfile: ./containers/docs/Dockerfile
+    ports:
+      - "4173:4173"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - .:/app
+
 volumes:
   pgdata:
