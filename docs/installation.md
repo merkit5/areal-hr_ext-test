@@ -35,6 +35,6 @@ Docker / Docker Compose
 
 🖥️ Frontend: http://localhost
 
-⚙️ API: http://localhost:3000
+[API Документация](/api)
 
 🐘 PostgreSQL: localhost:5433

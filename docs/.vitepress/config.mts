@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Areal HR System",
   description: "Веб-приложение, в котором специалист по кадрам ведет учет сотрудников в нескольких организациях.",
+  ignoreDeadLinks: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -15,7 +16,10 @@ export default defineConfig({
     sidebar: [
       {
         text: 'Установка и настройка',
-        text: 'API',
+        items: [
+          { text: 'API', link: '/api' },
+          { text: 'Установка', link: '/installation' }
+        ]
       }
     ],
 

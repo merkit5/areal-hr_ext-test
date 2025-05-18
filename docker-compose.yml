@@ -50,8 +50,6 @@ services:
       - "4173:4173"
     environment:
       NODE_ENV: production
-    volumes:
-      - .:/app
 
 volumes:
   pgdata:
